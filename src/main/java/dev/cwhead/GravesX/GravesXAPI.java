@@ -1004,11 +1004,8 @@ public class GravesXAPI {
     }
 
     /**
-     * <p>
-     * @deprecated
-     * Use {@link #isGrave(Grave, Location)} instead for precise location checking.
+     * @deprecated Use {@link #isGrave(Grave, Location)} instead for precise location checking.
      * This code is added for debugging purposes.
-     * </p>
      *
      * Checks if the specified location is a grave's location.
      *
