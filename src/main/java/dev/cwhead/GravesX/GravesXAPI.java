@@ -1,16 +1,17 @@
 package dev.cwhead.GravesX;
 
+import com.mojang.authlib.GameProfile;
 import com.ranull.graves.Graves;
-import com.ranull.graves.data.BlockData;
+import com.ranull.graves.data.*;
 import com.ranull.graves.event.GraveBlockPlaceEvent;
 import com.ranull.graves.event.GraveCreateEvent;
 import com.ranull.graves.event.GraveProtectionCreateEvent;
 import com.ranull.graves.manager.*;
 import com.ranull.graves.type.Grave;
-import com.ranull.graves.util.SkinSignatureUtil;
-import com.ranull.graves.util.SkinTextureUtil;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
+import com.ranull.graves.util.*;
+import org.bukkit.*;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.Skull;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -18,11 +19,15 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.PluginManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.util.*;
 
 /**
@@ -436,6 +441,595 @@ public class GravesXAPI {
     public void removeOldestGrave(LivingEntity livingEntity) {
         GraveManager graveManager = plugin.getGraveManager();
         graveManager.removeOldestGrave(livingEntity);
+    }
+
+    /**
+     * Retrieves the BlockData associated with a grave at a given location.
+     *
+     * @param location       The location of the grave.
+     * @param graveUUID      The unique identifier of the grave.
+     * @param replaceMaterial The material to replace in the BlockData.
+     * @param replaceData    Additional data to apply to the BlockData.
+     * @return A BlockData instance representing the grave at the specified location.
+     */
+    public BlockData getBlockData(Location location, UUID graveUUID, String replaceMaterial, String replaceData) {
+        return new BlockData(location, graveUUID, replaceMaterial, replaceData);
+    }
+
+    /**
+     * Retrieves the ChunkData for the chunk containing the specified location.
+     *
+     * @param location The location for which to retrieve the chunk data.
+     * @return A ChunkData instance representing the chunk at the specified location.
+     */
+    public ChunkData getChunkData(Location location) {
+        return new ChunkData(location);
+    }
+
+    /**
+     * Retrieves the EntityData for an entity associated with a grave.
+     *
+     * @param location     The location of the entity.
+     * @param uuidEntity   The unique identifier of the entity.
+     * @param uuidGrave    The unique identifier of the grave.
+     * @param type         The type of the entity.
+     * @return An EntityData instance representing the entity associated with the grave.
+     */
+    public EntityData getEntityData(Location location, UUID uuidEntity, UUID uuidGrave, EntityData.Type type) {
+        return new EntityData(location, uuidEntity, uuidGrave, type);
+    }
+
+    /**
+     * Retrieves the HologramData for a hologram associated with a grave.
+     *
+     * @param location    The location of the hologram.
+     * @param uuidEntity  The unique identifier of the entity associated with the hologram.
+     * @param uuidGrave   The unique identifier of the grave.
+     * @param line        The line number of the hologram to retrieve.
+     * @return A HologramData instance representing the hologram associated with the grave.
+     */
+    public HologramData getHologramData(Location location, UUID uuidEntity, UUID uuidGrave, int line) {
+        return new HologramData(location, uuidEntity, uuidGrave, line);
+    }
+
+    /**
+     * Retrieves the LocationData for a given location.
+     *
+     * @param location The location for which to retrieve data.
+     * @return A LocationData instance representing the specified location.
+     */
+    public LocationData getLocationData(Location location) {
+        return new LocationData(location);
+    }
+
+    /**
+     * Simplifies a given BlockFace to one of the four cardinal directions (NORTH, EAST, SOUTH, WEST).
+     *
+     * @param face The BlockFace to simplify.
+     * @return The simplified BlockFace.
+     */
+    public BlockFace simplifyBlockFace(BlockFace face) {
+        return BlockFaceUtil.getSimpleBlockFace(face);
+    }
+
+    /**
+     * Retrieves the Rotation corresponding to a given BlockFace.
+     *
+     * @param face The BlockFace for which to retrieve the rotation.
+     * @return The corresponding Rotation for the specified BlockFace.
+     */
+    public Rotation getRotationFromBlockFace(BlockFace face) {
+        return BlockFaceUtil.getBlockFaceRotation(face);
+    }
+
+    /**
+     * Encodes an object to a Base64 string using Base64Util.
+     *
+     * @param object The object to encode.
+     * @return The Base64 encoded string, or null if encoding fails.
+     */
+    public String encodeObjectToBase64(Object object) {
+        return Base64Util.objectToBase64(object);
+    }
+
+    /**
+     * Decodes a Base64 string to an object using Base64Util.
+     *
+     * @param base64String The Base64 string to decode.
+     * @return The decoded object, or null if decoding fails.
+     */
+    public Object decodeBase64ToObject(String base64String) {
+        return Base64Util.base64ToObject(base64String);
+    }
+
+    /**
+     * Loads a class with the specified name using ClassUtil.
+     *
+     * @param className The fully qualified name of the class to be loaded.
+     */
+    public void loadClass(String className) {
+        ClassUtil.loadClass(className);
+    }
+
+    /**
+     * Gets the Color corresponding to the given color name using ColorUtil.
+     *
+     * @param colorName The name of the color as a string.
+     * @return The Color corresponding to the given name, or null if no match is found.
+     */
+    public Color getColor(String colorName) {
+        return ColorUtil.getColor(colorName);
+    }
+
+    /**
+     * Parses a hex color code to a Color using ColorUtil.
+     *
+     * @param hex The hex color code as a string (e.g., "#FF5733").
+     * @return The Color corresponding to the hex color code, or null if the code is invalid.
+     */
+    public Color getColorFromHex(String hex) {
+        return ColorUtil.getColorFromHex(hex);
+    }
+
+    /**
+     * Creates a Particle.DustOptions object using a hex color code.
+     *
+     * @param hexColor The hex color code as a string (e.g., "#FF5733").
+     * @param size The size of the dust particle.
+     * @return A Particle.DustOptions object with the specified color and size, or null if the color code is invalid.
+     */
+    public Particle.DustOptions createDustOptionsFromHex(String hexColor, float size) {
+        return ColorUtil.createDustOptionsFromHex(hexColor, size);
+    }
+
+    /**
+     * Checks if the specified entity has the given permission using EntityUtil.
+     *
+     * @param entity     The entity to check.
+     * @param permission The permission to check for.
+     * @return {@code true} if the entity has the specified permission,
+     *         {@code true} if the method is not found,
+     *         or {@code false} if an exception occurs.
+     */
+    public boolean hasPermission(Entity entity, String permission) {
+        return EntityUtil.hasPermission(entity, permission);
+    }
+
+    /**
+     * Gets the total experience of the specified player using ExperienceUtil.
+     *
+     * @param player The player to get the experience from.
+     * @return The total experience of the player.
+     */
+    public int getPlayerExperience(Player player) {
+        return ExperienceUtil.getPlayerExperience(player);
+    }
+
+    /**
+     * Gets the experience required to reach a specific level using ExperienceUtil.
+     *
+     * @param level The level to get the experience for.
+     * @return The experience required to reach the specified level.
+     */
+    public int getExperienceAtLevel(int level) {
+        return ExperienceUtil.getExperienceAtLevel(level);
+    }
+
+    /**
+     * Calculates the level from a given amount of experience using ExperienceUtil.
+     *
+     * @param experience The experience to calculate the level from.
+     * @return The level corresponding to the given experience.
+     */
+    public long getLevelFromExperience(long experience) {
+        return ExperienceUtil.getLevelFromExperience(experience);
+    }
+
+    /**
+     * Calculates the drop percentage of experience using ExperienceUtil.
+     *
+     * @param experience The total experience.
+     * @param percent    The percentage to drop.
+     * @return The experience drop amount.
+     */
+    public int getDropPercent(int experience, float percent) {
+        return ExperienceUtil.getDropPercent(experience, percent);
+    }
+
+    /**
+     * @deprecated
+     * <p>
+     * This method is deprecated and will be removed in a future version.
+     * Use {@link #getLevelFromExperience(long)} instead.
+     * </p>
+     *
+     * Gets the amount of experience a player will drop upon death based on a percentage.
+     *
+     * @param player          The player to get the drop experience from.
+     * @param expStorePercent The percentage of experience to drop.
+     * @return The amount of experience to drop.
+     */
+    @Deprecated
+    public int getPlayerDropExperience(Player player, float expStorePercent) {
+        return ExperienceUtil.getPlayerDropExperience(player, expStorePercent);
+    }
+
+    /**
+     * Moves a file to a new location with a new name using FileUtil.
+     *
+     * @param file The file to be moved.
+     * @param name The new name for the file.
+     */
+    public void moveFile(File file, String name) {
+        FileUtil.moveFile(file, name);
+    }
+
+    /**
+     * @deprecated
+     * <p>
+     * This method is deprecated and will be removed in a future version.
+     * Use {@link #moveFile(File, String)} instead.
+     * </p>
+     *
+     * Copies a file to a new location with a new name using FileUtil.
+     *
+     * @param file The file to be copied.
+     * @param name The new name for the copied file.
+     */
+    @Deprecated
+    public void copyFile(File file, String name) {
+        FileUtil.copyFile(file, name);
+    }
+
+    /**
+     * Gets the appropriate inventory size based on the given size.
+     *
+     * @param size The size to be used for determining the inventory size.
+     * @return The appropriate inventory size.
+     */
+    public int getInventorySize(int size) {
+        return InventoryUtil.getInventorySize(size);
+    }
+
+    /**
+     * Equips the player's armor from the given inventory.
+     *
+     * @param inventory The inventory containing the armor items.
+     * @param player    The player to be equipped with armor.
+     */
+    public void equipArmor(Inventory inventory, Player player) {
+        InventoryUtil.equipArmor(inventory, player);
+    }
+
+    /**
+     * Equips the player's inventory items from the given inventory.
+     *
+     * @param inventory The inventory containing the items.
+     * @param player    The player to be equipped with items.
+     */
+    public void equipItems(Inventory inventory, Player player) {
+        InventoryUtil.equipItems(inventory, player);
+    }
+
+    /**
+     * Converts the given inventory to a string representation.
+     *
+     * @param inventory The inventory to be converted.
+     * @return The string representation of the inventory.
+     */
+    public String inventoryToString(Inventory inventory) {
+        return InventoryUtil.inventoryToString(inventory);
+    }
+
+    /**
+     * Converts a string representation of an inventory to an Inventory object.
+     *
+     * @param inventoryHolder The inventory holder.
+     * @param string          The string representation of the inventory.
+     * @param title           The title of the inventory.
+     * @param plugin          The Graves plugin instance.
+     * @return The Inventory object.
+     */
+    public Inventory stringToInventory(InventoryHolder inventoryHolder, String string, String title, Graves plugin) {
+        return InventoryUtil.stringToInventory(inventoryHolder, string, title, plugin);
+    }
+
+    public LibraryLoaderUtil getLibraryLoaderUtil() {
+        return new LibraryLoaderUtil(plugin);
+    }
+
+    /**
+     * Rounds the given location's coordinates to the nearest whole numbers.
+     *
+     * @param location The location to be rounded.
+     * @return A new location with rounded coordinates.
+     */
+    public Location roundLocation(Location location) {
+        return LocationUtil.roundLocation(location);
+    }
+
+    /**
+     * Converts a Location object to a string representation.
+     *
+     * @param location The location to be converted.
+     * @return A string representation of the location in the format "world|x|y|z".
+     */
+    public String locationToString(Location location) {
+        return LocationUtil.locationToString(location);
+    }
+
+    /**
+     * Converts a chunk's location to a string representation.
+     *
+     * @param location The location within the chunk.
+     * @return A string representation of the chunk in the format "world|chunkX|chunkZ".
+     */
+    public String chunkToString(Location location) {
+        return LocationUtil.chunkToString(location);
+    }
+
+    /**
+     * Converts a chunk string representation back to a Location object.
+     *
+     * @param string The string representation of the chunk in the format "world|chunkX|chunkZ".
+     * @return A Location object representing the chunk.
+     */
+    public Location chunkStringToLocation(String string) {
+        return LocationUtil.chunkStringToLocation(string);
+    }
+
+    /**
+     * Converts a string representation of a location back to a Location object.
+     *
+     * @param string The string representation of the location in the format "world|x|y|z".
+     * @return A Location object.
+     */
+    public Location stringToLocation(String string) {
+        return LocationUtil.stringToLocation(string);
+    }
+
+    /**
+     * Finds the closest location to a given base location from a list of locations.
+     *
+     * @param locationBase The base location to compare against.
+     * @param locationList The list of locations to search through.
+     * @return The closest location to the base location, or null if the list is empty.
+     */
+    public Location getClosestLocation(Location locationBase, List<Location> locationList) {
+        return LocationUtil.getClosestLocation(locationBase, locationList);
+    }
+
+    /**
+     * Checks if the given material is an air block.
+     *
+     * @param material The material to check.
+     * @return True if the material is air, false otherwise.
+     */
+    public boolean isAir(Material material) {
+        return MaterialUtil.isAir(material);
+    }
+
+    /**
+     * Checks if the given material is lava.
+     *
+     * @param material The material to check.
+     * @return True if the material is lava, false otherwise.
+     */
+    public boolean isLava(Material material) {
+        return MaterialUtil.isLava(material);
+    }
+
+    /**
+     * Checks if the given material is not solid and is safe (i.e., not lava).
+     *
+     * @param material The material to check.
+     * @return True if the material is not solid and safe, false otherwise.
+     */
+    public boolean isSafeNotSolid(Material material) {
+        return MaterialUtil.isSafeNotSolid(material);
+    }
+
+    /**
+     * Checks if the given material is solid and safe (i.e., not lava).
+     *
+     * @param material The material to check.
+     * @return True if the material is solid and safe, false otherwise.
+     */
+    public boolean isSafeSolid(Material material) {
+        return MaterialUtil.isSafeSolid(material);
+    }
+
+    /**
+     * Checks if the given material is water.
+     *
+     * @param material The material to check.
+     * @return True if the material is water, false otherwise.
+     */
+    public boolean isWater(Material material) {
+        return MaterialUtil.isWater(material);
+    }
+
+    /**
+     * Checks if the given material is a player head.
+     *
+     * @param material The material to check.
+     * @return True if the material is a player head, false otherwise.
+     */
+    public boolean isPlayerHead(Material material) {
+        return MaterialUtil.isPlayerHead(material);
+    }
+
+    /**
+     * Posts the given log content to mclo.gs and returns the URL of the posted log.
+     *
+     * @param content The log content to be posted.
+     * @return The URL of the posted log, or null if the post was unsuccessful.
+     */
+    public String postLog(String content) {
+        return MclogsUtil.postLogToMclogs(content);
+    }
+
+    /**
+     * Gets the highest integer value associated with a specific permission prefix for the player.
+     *
+     * @param player     The player whose permissions are being checked.
+     * @param permission The permission prefix to search for.
+     * @return The highest integer value found for the specified permission prefix. Returns 0 if no such permission is found.
+     */
+    public int getHighestInt(Player player, String permission) {
+        return PermissionUtil.getHighestInt(player, permission);
+    }
+
+    /**
+     * Gets the highest double value associated with a specific permission prefix for the player.
+     *
+     * @param player     The player whose permissions are being checked.
+     * @param permission The permission prefix to search for.
+     * @return The highest double value found for the specified permission prefix. Returns 0 if no such permission is found.
+     */
+    public double getHighestDouble(Player player, String permission) {
+        return PermissionUtil.getHighestDouble(player, permission);
+    }
+
+    /**
+     * Triggers the main hand swing animation for the specified player.
+     *
+     * @param player The player whose main hand swing animation is to be triggered.
+     */
+    public void swingMainHand(Player player) {
+        ReflectionUtil.swingMainHand(player);
+    }
+
+    /**
+     * Copies resources from the plugin's JAR file to the specified output path.
+     *
+     * @param inputPath  The path inside the JAR file to copy from.
+     * @param outputPath The path on the file system to copy to.
+     */
+    public void copyResources(String inputPath, String outputPath) {
+        ResourceUtil.copyResources(inputPath, outputPath, plugin);
+    }
+
+    /**
+     * Copies resources from the plugin's JAR file to the specified output path, with an option to overwrite existing files.
+     *
+     * @param inputPath  The path inside the JAR file to copy from.
+     * @param outputPath The path on the file system to copy to.
+     * @param overwrite  Whether to overwrite existing files.
+     */
+    public void copyResources(String inputPath, String outputPath, boolean overwrite) {
+        ResourceUtil.copyResources(inputPath, outputPath, overwrite, plugin);
+    }
+
+    /**
+     * Gets the skin signature of the specified entity if it is a player.
+     *
+     * @param entity The entity whose skin signature is to be retrieved.
+     * @return The skin signature of the player, or null if the entity is not a player or the signature could not be retrieved.
+     */
+    public String getSkinSignature(Entity entity) {
+        return SkinSignatureUtil.getSignature(entity);
+    }
+
+    /**
+     * Sets the texture of a Skull block.
+     *
+     * @param skull  The Skull block.
+     * @param name   The name associated with the texture.
+     * @param base64 The Base64 encoded texture.
+     */
+    public void setSkullTexture(Skull skull, String name, String base64) {
+        SkinTextureUtil.setSkullBlockTexture(skull, name, base64);
+    }
+
+    /**
+     * Sets the texture of a Skull item stack.
+     *
+     * @param skullMeta The SkullMeta item meta.
+     * @param name      The name associated with the texture.
+     * @param base64    The Base64 encoded texture.
+     */
+    public void setSkullTexture(SkullMeta skullMeta, String name, String base64) {
+        SkinTextureUtil.setSkullBlockTexture(skullMeta, name, base64);
+    }
+
+    /**
+     * Retrieves the texture of the specified entity.
+     *
+     * @param entity The entity from which to get the texture.
+     * @return The Base64 encoded texture string, or null if not found.
+     */
+    public String getTexture(Entity entity) {
+        return SkinTextureUtil.getTexture(entity);
+    }
+
+    /**
+     * Retrieves the GameProfile of the specified player.
+     *
+     * @param player The player from which to get the GameProfile.
+     * @return The GameProfile of the player, or null if not found.
+     */
+    public GameProfile getPlayerGameProfile(Player player) {
+        return SkinTextureUtil.getPlayerGameProfile(player);
+    }
+
+    /**
+     * Converts a string to a UUID.
+     *
+     * @param string The string to convert to a UUID.
+     * @return The UUID if the string is a valid UUID format, otherwise null.
+     */
+    public UUID getUUID(String string) {
+        return UUIDUtil.getUUID(string);
+    }
+
+    /**
+     * Gets the latest version of a resource from SpigotMC.
+     *
+     * @param resourceId The ID of the resource on SpigotMC.
+     * @return The latest version of the resource as a String, or null if an error occurs.
+     */
+    public String getLatestVersion(int resourceId) {
+        return UpdateUtil.getLatestVersion(resourceId);
+    }
+
+    /**
+     * Checks if a given file is a valid YAML file.
+     *
+     * @param file The file to check.
+     * @return True if the file is a valid YAML file, otherwise false.
+     */
+    public boolean isValidYAML(File file) {
+        return YAMLUtil.isValidYAML(file);
+    }
+
+    /**
+     * <p>
+     * @deprecated
+     * Use {@link #isGrave(Grave, Location)} instead for precise location checking.
+     * This code is added for debugging purposes.
+     * </p>
+     *
+     * Checks if the specified location is a grave's location.
+     *
+     * @param grave the grave to check. This always returns true for the provided grave's death location.
+     *              For more precise checking, use {@link #isGrave(Grave, Location)} with a specific location.
+     * @return true if the location matches the grave's death location, false otherwise.
+     */
+    @Deprecated
+    public boolean isGrave(Grave grave) {
+        return isGrave(grave, grave.getLocationDeath());
+    }
+
+    /**
+     * Checks if a given location matches the death location of a specific grave.
+     *
+     * @param grave the grave to check
+     * @param location the location to compare with the grave's death location
+     * @return true if the location matches the grave's death location, false otherwise.
+     */
+    public boolean isGrave(Grave grave, Location location) {
+        return location.equals(grave.getLocationDeath());
     }
 
     /**
