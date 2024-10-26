@@ -13,6 +13,7 @@ jobs:
       - name: Close issue
         uses: peter-evans/close-issue@v3
         with:
+          github-token: ${{ github.token }}
           issue-number: ${{ github.event.issue.number }}
           comment: |
             This issue has been marked as invalid and is being closed automatically for one or more of the following reasons:
@@ -26,7 +27,9 @@ jobs:
 
             Please review the issue guidelines and open a new issue if necessary, ensuring all required information is provided.
 
-      - name: Lock issue
-        uses: peter-evans/lock-threads@v3
+      - name: Lock Threads
+        uses: dessant/lock-threads@v5.0.1
         with:
-          issue-number: ${{ github.event.issue.number }}
+          github-token: ${{ github.token }}
+          include-all-issue-labels: 'invalid'
+          process-only: 'issues'
