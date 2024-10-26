@@ -2182,127 +2182,125 @@ public final class DataManager {
      * Migrates data from SQLite to the target database (MySQL, MariaDB, PostgreSQL, H2, or MSSQL).
      */
     private void migrate() {
-        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
-            File dataFolder = new File(plugin.getDataFolder(), "data");
-            File sqliteFile = new File(dataFolder, "data.db");
+        File dataFolder = new File(plugin.getDataFolder(), "data");
+        File sqliteFile = new File(dataFolder, "data.db");
 
-            if (!sqliteFile.exists() || !dataFolder.exists()) {
-                plugin.getLogger().warning("SQLite database file or folder does not exist in \"" + dataFolder.getPath() + "\". Skipping database migration.");
-                return;
-            }
+        if (!sqliteFile.exists() || !dataFolder.exists()) {
+            plugin.getLogger().warning("SQLite database file or folder does not exist in \"" + dataFolder.getPath() + "\". Skipping database migration.");
+            return;
+        }
 
-            HikariConfig config = new HikariConfig();
-            String journalMode = plugin.getConfig().getString("settings.storage.sqlite.journal-mode", "WAL");
-            String synchronous = plugin.getConfig().getString("settings.storage.sqlite.synchronous", "OFF");
+        HikariConfig config = new HikariConfig();
+        String journalMode = plugin.getConfig().getString("settings.storage.sqlite.journal-mode", "WAL");
+        String synchronous = plugin.getConfig().getString("settings.storage.sqlite.synchronous", "OFF");
 
-            config.setJdbcUrl("jdbc:sqlite:" + sqliteFile.getPath());
-            config.setConnectionTimeout(30000); // 30 seconds
-            config.setIdleTimeout(600000); // 10 minutes
-            config.setMaxLifetime(1800000); // 30 minutes
-            config.setMaximumPoolSize(50);
-            config.addDataSourceProperty("dataSource.journalMode", journalMode);
-            config.addDataSourceProperty("dataSource.synchronous", synchronous);
-            config.setConnectionInitSql("PRAGMA busy_timeout = 30000; PRAGMA journal_mode=" + journalMode + "; PRAGMA synchronous=" + synchronous + ";");
-            config.setPoolName("Graves SQLite to " + type + " Migration");
-            config.addDataSourceProperty("autoReconnect", "true");
-            config.setDriverClassName("org.sqlite.JDBC");
+        config.setJdbcUrl("jdbc:sqlite:" + sqliteFile.getPath());
+        config.setConnectionTimeout(30000); // 30 seconds
+        config.setIdleTimeout(600000); // 10 minutes
+        config.setMaxLifetime(1800000); // 30 minutes
+        config.setMaximumPoolSize(50);
+        config.addDataSourceProperty("dataSource.journalMode", journalMode);
+        config.addDataSourceProperty("dataSource.synchronous", synchronous);
+        config.setConnectionInitSql("PRAGMA busy_timeout = 30000; PRAGMA journal_mode=" + journalMode + "; PRAGMA synchronous=" + synchronous + ";");
+        config.setPoolName("Graves SQLite to " + type + " Migration");
+        config.addDataSourceProperty("autoReconnect", "true");
+        config.setDriverClassName("org.sqlite.JDBC");
 
-            // Use a try-with-resources to ensure that HikariDataSource is closed after use
-            try (HikariDataSource dataSourceMigrate = new HikariDataSource(config);
-                 Connection sqliteConnection = dataSourceMigrate.getConnection()) {
+        // Use a try-with-resources to ensure that HikariDataSource is closed after use
+        try (HikariDataSource dataSourceMigrate = new HikariDataSource(config);
+             Connection sqliteConnection = dataSourceMigrate.getConnection()) {
 
-                DatabaseMetaData metaData = sqliteConnection.getMetaData();
-                try (ResultSet tables = metaData.getTables(null, null, "%", new String[]{"TABLE"})) {
-                    boolean migrationSuccess = true;
+            DatabaseMetaData metaData = sqliteConnection.getMetaData();
+            try (ResultSet tables = metaData.getTables(null, null, "%", new String[]{"TABLE"})) {
+                boolean migrationSuccess = true;
 
-                    while (tables.next()) {
-                        String tableName = tables.getString("TABLE_NAME");
-                        StringBuilder createTableQuery = new StringBuilder();
-                        List<String> columns = new ArrayList<>();
+                while (tables.next()) {
+                    String tableName = tables.getString("TABLE_NAME");
+                    StringBuilder createTableQuery = new StringBuilder();
+                    List<String> columns = new ArrayList<>();
 
-                        // Using try-with-resources for the statement
-                        try (Statement sqliteStatement = sqliteConnection.createStatement();
-                             ResultSet tableData = sqliteStatement.executeQuery("SELECT * FROM " + tableName)) {
+                    // Using try-with-resources for the statement
+                    try (Statement sqliteStatement = sqliteConnection.createStatement();
+                         ResultSet tableData = sqliteStatement.executeQuery("SELECT * FROM " + tableName)) {
 
-                            ResultSetMetaData tableMetaData = tableData.getMetaData();
-                            createTableQuery.append("CREATE TABLE IF NOT EXISTS ").append(tableName).append(" (");
-                            for (int i = 1; i <= tableMetaData.getColumnCount(); i++) {
-                                String columnName = tableMetaData.getColumnName(i);
-                                String sqliteType = tableMetaData.getColumnTypeName(i);
-                                String targetType = mapSQLiteTypeToTargetDB(sqliteType, columnName);
+                        ResultSetMetaData tableMetaData = tableData.getMetaData();
+                        createTableQuery.append("CREATE TABLE IF NOT EXISTS ").append(tableName).append(" (");
+                        for (int i = 1; i <= tableMetaData.getColumnCount(); i++) {
+                            String columnName = tableMetaData.getColumnName(i);
+                            String sqliteType = tableMetaData.getColumnTypeName(i);
+                            String targetType = mapSQLiteTypeToTargetDB(sqliteType, columnName);
 
-                                if (targetType != null) {
-                                    createTableQuery.append(columnName).append(" ").append(targetType);
-                                    if (i < tableMetaData.getColumnCount()) {
-                                        createTableQuery.append(", ");
-                                    } else {
-                                        createTableQuery.append(")");
-                                    }
-                                    columns.add(columnName);
+                            if (targetType != null) {
+                                createTableQuery.append(columnName).append(" ").append(targetType);
+                                if (i < tableMetaData.getColumnCount()) {
+                                    createTableQuery.append(", ");
+                                } else {
+                                    createTableQuery.append(")");
                                 }
+                                columns.add(columnName);
                             }
+                        }
 
-                            if (columns.isEmpty()) {
-                                plugin.getLogger().warning("No valid columns found for table " + tableName + ". Skipping table creation.");
-                                continue;
-                            }
+                        if (columns.isEmpty()) {
+                            plugin.getLogger().warning("No valid columns found for table " + tableName + ". Skipping table creation.");
+                            continue;
+                        }
 
-                            plugin.getLogger().info("Creating table with query: " + createTableQuery.toString());
-                            executeUpdate(createTableQuery.toString(), new Object[0]);
+                        plugin.getLogger().info("Creating table with query: " + createTableQuery.toString());
+                        executeUpdate(createTableQuery.toString(), new Object[0]);
 
-                            if ("grave".equals(tableName)) {
-                                adjustGraveTableForTargetDB();
-                            }
+                        if ("grave".equals(tableName)) {
+                            adjustGraveTableForTargetDB();
+                        }
 
-                            String insertQueryTemplate = "INSERT INTO " + tableName + " (" + String.join(", ", columns) + ") VALUES (" + String.join(", ", Collections.nCopies(columns.size(), "?")) + ")";
-                            try (PreparedStatement insertStatement = getConnection().prepareStatement(insertQueryTemplate)) {
-                                while (tableData.next()) {
-                                    for (int i = 1; i <= tableMetaData.getColumnCount(); i++) {
-                                        String columnName = tableMetaData.getColumnName(i);
-                                        if (columns.contains(columnName)) {
-                                            String data = tableData.getString(i);
-                                            if (data != null) {
-                                                data = data.replace("'", "''");
-                                            }
-                                            insertStatement.setString(columns.indexOf(columnName) + 1, data != null ? data : null);
+                        String insertQueryTemplate = "INSERT INTO " + tableName + " (" + String.join(", ", columns) + ") VALUES (" + String.join(", ", Collections.nCopies(columns.size(), "?")) + ")";
+                        try (PreparedStatement insertStatement = getConnection().prepareStatement(insertQueryTemplate)) {
+                            while (tableData.next()) {
+                                for (int i = 1; i <= tableMetaData.getColumnCount(); i++) {
+                                    String columnName = tableMetaData.getColumnName(i);
+                                    if (columns.contains(columnName)) {
+                                        String data = tableData.getString(i);
+                                        if (data != null) {
+                                            data = data.replace("'", "''");
                                         }
+                                        insertStatement.setString(columns.indexOf(columnName) + 1, data != null ? data : null);
                                     }
-                                    plugin.getLogger().info("Inserting data with query: " + insertQueryTemplate);
-                                    insertStatement.executeUpdate();
                                 }
-                            } catch (SQLException e) {
-                                plugin.getLogger().severe("Error inserting data into table " + tableName + ": " + e.getMessage());
-                                plugin.getLogger().severe("Failed query template: " + insertQueryTemplate);
-                                migrationSuccess = false;
+                                plugin.getLogger().info("Inserting data with query: " + insertQueryTemplate);
+                                insertStatement.executeUpdate();
                             }
                         } catch (SQLException e) {
-                            plugin.getLogger().severe("Error migrating table " + tableName + ": " + e.getMessage());
-                            plugin.getLogger().severe("Failed query: " + createTableQuery);
+                            plugin.getLogger().severe("Error inserting data into table " + tableName + ": " + e.getMessage());
+                            plugin.getLogger().severe("Failed query template: " + insertQueryTemplate);
                             migrationSuccess = false;
                         }
+                    } catch (SQLException e) {
+                        plugin.getLogger().severe("Error migrating table " + tableName + ": " + e.getMessage());
+                        plugin.getLogger().severe("Failed query: " + createTableQuery);
+                        migrationSuccess = false;
                     }
-
-                    if (migrationSuccess) {
-                        File renamedFile = new File(dataFolder, "data.old.db");
-                        if (sqliteFile.renameTo(renamedFile)) {
-                            plugin.getLogger().info("SQLite database successfully renamed to data.old.db");
-                        } else {
-                            plugin.getLogger().severe("Failed to rename SQLite database to data.old.db");
-                        }
-                    }
-                } catch (SQLException e) {
-                    plugin.getLogger().severe("Error retrieving tables from SQLite: " + e.getMessage());
                 }
 
-                try {
-                    sqliteConnection.close();
-                } catch (SQLException e) {
-                    plugin.getLogger().severe("Error closing SQLite connection: " + e.getMessage());
+                if (migrationSuccess) {
+                    File renamedFile = new File(dataFolder, "data.old.db");
+                    if (sqliteFile.renameTo(renamedFile)) {
+                        plugin.getLogger().info("SQLite database successfully renamed to data.old.db");
+                    } else {
+                        plugin.getLogger().severe("Failed to rename SQLite database to data.old.db");
+                    }
                 }
             } catch (SQLException e) {
-                plugin.getLogger().severe("Error migrating SQLite to target DB: " + e.getMessage());
+                plugin.getLogger().severe("Error retrieving tables from SQLite: " + e.getMessage());
             }
-        });
+
+            try {
+                sqliteConnection.close();
+            } catch (SQLException e) {
+                plugin.getLogger().severe("Error closing SQLite connection: " + e.getMessage());
+            }
+        } catch (SQLException e) {
+            plugin.getLogger().severe("Error migrating SQLite to target DB: " + e.getMessage());
+        }
     }
 
     /**
