@@ -167,15 +167,6 @@ settings:
         # Should players be allowed to preview a grave in a protected state?
         preview: false
 
-      #############
-      # Graveyard #
-      #############
-      graveyard:
-        # Enable the graveyard feature. Currently unstable for production. Do not use unless you know what you are doing.
-        enabled: false
-        # If a suitable graveyard is found, should we still spawn the grave where the entity died.
-        death: false
-
       ############
       # Teleport #
       ############
@@ -1463,18 +1454,3 @@ settings:
                 model-data: -1
                 lore:
                   - "Example Lore"
-
-          graveyard:
-            # Title for the graveyard menu.
-            title: "Graveyards"
-            slot:
-              0:
-                material: "PAPER"
-                function: "distance"
-                name: "Information"
-                glow: false
-                model-data: -1
-                lore:
-                  - "Items: &f%item%"
-                  - "Levels: &f%level%"
-                  - "Death Location: &f%world_formatted%, %x%x, %y%y, %z%z"

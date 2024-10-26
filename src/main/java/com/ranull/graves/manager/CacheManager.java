@@ -2,7 +2,6 @@ package com.ranull.graves.manager;
 
 import com.ranull.graves.data.ChunkData;
 import com.ranull.graves.type.Grave;
-import com.ranull.graves.type.Graveyard;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
@@ -48,15 +47,6 @@ public final class CacheManager {
     private final Map<UUID, List<ItemStack>> removedItemStackMap;
 
     /**
-     * A map of graveyard names to their corresponding {@link Graveyard} objects.
-     * <p>
-     * This {@link Map} associates each graveyard name (as a {@link String}) with a {@link Graveyard} instance,
-     * allowing for easy retrieval of graveyard information.
-     * </p>
-     */
-    private final Map<String, Graveyard> graveyardMap;
-
-    /**
      * A map of block identifiers to their corresponding {@link Location} objects where the block was right-clicked.
      * <p>
      * This {@link Map} tracks the locations of blocks that have been right-clicked, identified by a {@link String}
@@ -68,8 +58,7 @@ public final class CacheManager {
     /**
      * Constructs a new {@link CacheManager} with initialized maps.
      * <p>
-     * The constructor initializes all the maps used for caching data related to graves, chunks, locations, items,
-     * and graveyards.
+     * The constructor initializes all the maps used for caching data related to graves, chunks, locations, and items
      * </p>
      */
     public CacheManager() {
@@ -77,7 +66,6 @@ public final class CacheManager {
         this.chunkMap = new HashMap<>();
         this.lastLocationMap = new HashMap<>();
         this.removedItemStackMap = new HashMap<>();
-        this.graveyardMap = new HashMap<>();
     }
 
     /**
@@ -86,14 +74,6 @@ public final class CacheManager {
      */
     public Map<UUID, Grave> getGraveMap() {
         return graveMap;
-    }
-
-    /**
-     * Returns the map of graveyard names to their corresponding {@link Graveyard} objects.
-     * @return the map of graveyards
-     */
-    public Map<String, Graveyard> getGraveyardsMap() {
-        return graveyardMap;
     }
 
     /**

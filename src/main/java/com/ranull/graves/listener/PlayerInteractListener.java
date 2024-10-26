@@ -4,7 +4,6 @@ import com.ranull.graves.Graves;
 import com.ranull.graves.event.GraveParticleEvent;
 import com.ranull.graves.event.GraveCompassUseEvent;
 import com.ranull.graves.type.Grave;
-import com.ranull.graves.type.Graveyard;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -22,7 +21,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 /**
- * Listener for handling PlayerInteractEvent to interact with graves, graveyards, and compasses.
+ * Listener for handling PlayerInteractEvent to interact with graves and compasses.
  */
 public class PlayerInteractListener implements Listener {
     private final Graves plugin;
@@ -41,8 +40,6 @@ public class PlayerInteractListener implements Listener {
      *
      * This method processes interactions with:
      * - Graves: Opens a grave if the player interacts with a block or adjacent block that represents a grave.
-     * - Graveyards: Modifies the graveyard if the player interacts with blocks while holding a bone, depending on
-     *   the current state of the graveyard modification.
      * - Compasses: Updates or removes the compass item based on the grave it is tracking.
      *
      * The event is only processed if:
@@ -86,7 +83,7 @@ public class PlayerInteractListener implements Listener {
     }
 
     /**
-     * Handles interactions with blocks, including graves and graveyards.
+     * Handles interactions with blocks, including graves.
      *
      * @param event  The PlayerInteractEvent.
      * @param player The player interacting with the block.
@@ -99,9 +96,6 @@ public class PlayerInteractListener implements Listener {
 
         if (event.useInteractedBlock() != Event.Result.DENY && event.getAction() == Action.RIGHT_CLICK_BLOCK) {
             handleGraveInteraction(event, player, block);
-        }
-        if (event.getItem() != null && event.getItem().getType() == Material.BONE && plugin.getGraveyardManager().isModifyingGraveyard(player)) {
-            handleGraveyardModification(event, player, block);
         }
     }
 
@@ -135,41 +129,6 @@ public class PlayerInteractListener implements Listener {
                 plugin.logStackTrace(e);
             }
         }
-    }
-
-    /**
-     * Handles interactions for modifying graveyards.
-     *
-     * @param event  The PlayerInteractEvent.
-     * @param player The player interacting with the block.
-     * @param block  The block being interacted with.
-     */
-    private void handleGraveyardModification(PlayerInteractEvent event, Player player, Block block) {
-        Graveyard graveyard = plugin.getGraveyardManager().getModifyingGraveyard(player);
-        Location location = block.getLocation().clone();
-        Location locationRelative = block.getRelative(event.getBlockFace()).getLocation().clone();
-        Location clickedLocation = Objects.requireNonNull(event.getClickedBlock()).getLocation();
-
-        if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-            if (graveyard.hasGraveLocation(location)) {
-                plugin.getGraveyardManager().removeLocationInGraveyard(player, location, graveyard);
-                plugin.getCacheManager().removeRightClickedBlock(player.getName(), clickedLocation);
-            } else if (graveyard.hasGraveLocation(locationRelative)) {
-                plugin.getGraveyardManager().removeLocationInGraveyard(player, locationRelative, graveyard);
-                plugin.getCacheManager().removeRightClickedBlock(player.getName(), clickedLocation);
-            } else {
-                if (plugin.getGraveyardManager().isLocationInGraveyard(locationRelative, graveyard)) {
-                    plugin.getGraveyardManager().addLocationInGraveyard(player, locationRelative, graveyard);
-                    plugin.getCacheManager().addRightClickedBlock(player.getName(), clickedLocation);
-                } else {
-                    player.sendMessage(ChatColor.RED + "☠" + ChatColor.DARK_GRAY + " » " + ChatColor.RED + "Can't set location outside graveyard " + graveyard.getName());
-                }
-            }
-        } else {
-            player.sendMessage(ChatColor.RED + "☠" + ChatColor.DARK_GRAY + " » " + ChatColor.RED + "Can't break while modifying graveyard " + graveyard.getName());
-        }
-
-        event.setCancelled(true);
     }
 
     /**

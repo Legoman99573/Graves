@@ -3,14 +3,11 @@ package com.ranull.graves.listener;
 import com.ranull.graves.Graves;
 import com.ranull.graves.data.BlockData;
 import com.ranull.graves.event.*;
-import com.ranull.graves.integration.WorldGuard;
 import com.ranull.graves.type.Grave;
-import com.ranull.graves.type.Graveyard;
 import com.ranull.graves.util.*;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -259,9 +256,6 @@ public class EntityDeathListener implements Listener {
      * @return True if a grave should not be created, false otherwise.
      */
     private boolean handlePlayerDeath(Player player, String entityName) throws InvocationTargetException {
-        if (plugin.getGraveyardManager().isModifyingGraveyard(player)) {
-            plugin.getGraveyardManager().stopModifyingGraveyard(player);
-        }
         if (!plugin.hasGrantedPermission("graves.place", player.getPlayer())) {
             plugin.debugMessage("Grave not created for " + entityName + " because they don't have permission to place graves", 2);
             return true;
@@ -612,50 +606,9 @@ public class EntityDeathListener implements Listener {
         event.getDrops().addAll(event.getDrops());
         event.setDroppedExp(0);
 
-        boolean isGraveyardEnabled = plugin.getConfig("graveyard.enabled", grave).getBoolean("graveyard.enabled");
-
-        if (plugin.getIntegrationManager().hasWorldGuard()) {
-            WorldGuard worldGuard = new WorldGuard(plugin);
-
-            if (isGraveyardEnabled && worldGuard.isInGraveyardRegion((Player) livingEntity)) {
-                Graveyard graveyard = plugin.getGraveyardManager().getClosestGraveyard(grave.getLocationDeath(), livingEntity);
-                if (graveyard != null) {
-                    Map<Location, BlockFace> graveyardFreeSpaces = plugin.getGraveyardManager().getGraveyardFreeSpaces(graveyard);
-                    if (!graveyardFreeSpaces.isEmpty()) {
-                        for (Map.Entry<Location, BlockFace> entry : graveyardFreeSpaces.entrySet()) {
-                            Location graveyardLocation = entry.getKey();
-                            if (graveyardLocation != null && !plugin.getDataManager().hasGraveAtLocation(graveyardLocation)) {
-                                plugin.debugMessage("Graveyard Location found at " + graveyardLocation, 1);
-                                grave.setLocationDeath(graveyardLocation);
-                                grave.getLocationDeath().setYaw(grave.getYaw());
-                                grave.getLocationDeath().setPitch(grave.getPitch());
-                                graveyardLocation.setYaw(plugin.getConfig().getBoolean("settings.graveyard.facing") ? BlockFaceUtil.getBlockFaceYaw(entry.getValue()) : grave.getYaw());
-                                graveyardLocation.setPitch(grave.getPitch());
-                                locationMap.put(graveyardLocation, BlockData.BlockType.GRAVEYARD);
-                                break;
-                            } else {
-                                plugin.debugMessage("Graveyard Location is null", 1);
-                                grave.setLocationDeath(safeLocation != null ? safeLocation : location);
-                                grave.getLocationDeath().setYaw(grave.getYaw());
-                                grave.getLocationDeath().setPitch(grave.getPitch());
-                            }
-                        }
-                    }
-                } else {
-                    grave.setLocationDeath(safeLocation != null ? safeLocation : location);
-                    grave.getLocationDeath().setYaw(grave.getYaw());
-                    grave.getLocationDeath().setPitch(grave.getPitch());
-                }
-            } else {
-                grave.setLocationDeath(safeLocation != null ? safeLocation : location);
-                grave.getLocationDeath().setYaw(grave.getYaw());
-                grave.getLocationDeath().setPitch(grave.getPitch());
-            }
-        } else {
-            grave.setLocationDeath(safeLocation != null ? safeLocation : location);
-            grave.getLocationDeath().setYaw(grave.getYaw());
-            grave.getLocationDeath().setPitch(grave.getPitch());
-        }
+        grave.setLocationDeath(safeLocation != null ? safeLocation : location);
+        grave.getLocationDeath().setYaw(grave.getYaw());
+        grave.getLocationDeath().setPitch(grave.getPitch());
 
         if (locationMap.isEmpty()) {
             locationMap.put(grave.getLocationDeath(), BlockData.BlockType.DEATH);
@@ -804,11 +757,6 @@ public class EntityDeathListener implements Listener {
                     offsetY = plugin.getConfig("placement.offset.y", grave).getInt("placement.offset.y");
                     offsetZ = plugin.getConfig("placement.offset.z", grave).getInt("placement.offset.z");
                     break;
-                case GRAVEYARD:
-                    offsetX = plugin.getConfig().getInt("settings.graveyard.offset.x");
-                    offsetY = plugin.getConfig().getInt("settings.graveyard.offset.y");
-                    offsetZ = plugin.getConfig().getInt("settings.graveyard.offset.z");
-                    break;
             }
             location.add(offsetX, offsetY, offsetZ);
             GraveBlockPlaceEvent graveBlockPlaceEvent = new GraveBlockPlaceEvent(grave, location, entry.getValue(), entry.getKey().getBlock(), livingEntity);
@@ -846,20 +794,6 @@ public class EntityDeathListener implements Listener {
     }
 
     private Location findGraveLocation(Grave grave, LivingEntity livingEntity, Location location) {
-        if (plugin.getConfig("graveyard.enabled", grave).getBoolean("graveyard.enabled")) {
-            Graveyard graveyard = plugin.getGraveyardManager().getClosestGraveyard(location, livingEntity);
-            if (graveyard != null) {
-                Map<Location, BlockFace> graveyardFreeSpaces = plugin.getGraveyardManager().getGraveyardFreeSpaces(graveyard);
-                for (Map.Entry<Location, BlockFace> entry : graveyardFreeSpaces.entrySet()) {
-                    Location graveyardLocation = entry.getKey();
-                    if (!plugin.getDataManager().hasGraveAtLocation(graveyardLocation)) {
-                        graveyardLocation.setYaw(plugin.getConfig().getBoolean("settings.graveyard.facing") ? BlockFaceUtil.getBlockFaceYaw(entry.getValue()) : livingEntity.getLocation().getYaw());
-                        graveyardLocation.setPitch(livingEntity.getLocation().getPitch());
-                        return graveyardLocation;
-                    }
-                }
-            }
-        }
         return plugin.getLocationManager().getSafeGraveLocation(livingEntity, location, grave);
     }
 }

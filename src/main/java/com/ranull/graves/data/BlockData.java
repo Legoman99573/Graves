@@ -97,7 +97,6 @@ public class BlockData implements Serializable {
      */
     public enum BlockType {
         DEATH,
-        NORMAL,
-        GRAVEYARD
+        NORMAL
     }
 }

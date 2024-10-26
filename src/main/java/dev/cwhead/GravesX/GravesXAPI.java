@@ -352,11 +352,6 @@ public class GravesXAPI {
                     offsetY = plugin.getConfig("placement.offset.y", grave).getInt("placement.offset.y");
                     offsetZ = plugin.getConfig("placement.offset.z", grave).getInt("placement.offset.z");
                     break;
-                case GRAVEYARD:
-                    offsetX = plugin.getConfig().getInt("settings.graveyard.offset.x");
-                    offsetY = plugin.getConfig().getInt("settings.graveyard.offset.y");
-                    offsetZ = plugin.getConfig().getInt("settings.graveyard.offset.z");
-                    break;
             }
             location.add(offsetX, offsetY, offsetZ);
             GraveBlockPlaceEvent graveBlockPlaceEvent = new GraveBlockPlaceEvent(grave, location, entry.getValue(), entry.getKey().getBlock(), livingEntity);

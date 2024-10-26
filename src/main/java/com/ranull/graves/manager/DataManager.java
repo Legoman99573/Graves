@@ -1,6 +1,5 @@
 package com.ranull.graves.manager;
 
-import com.ranull.graves.type.Graveyard;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import com.ranull.graves.Graves;
@@ -9,8 +8,6 @@ import com.ranull.graves.type.Grave;
 import com.ranull.graves.util.*;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.block.BlockFace;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -215,7 +212,6 @@ public final class DataManager {
 
             loadGraveMap();
             loadBlockMap();
-            loadGraveyardsMap();
             loadEntityMap("armorstand", EntityData.Type.ARMOR_STAND);
             loadEntityMap("itemframe", EntityData.Type.ITEM_FRAME);
             loadHologramMap();
@@ -277,7 +273,6 @@ public final class DataManager {
         setupGraveTable();
         setupBlockTable();
         setupHologramTable();
-        setupGraveyardsTable();
         setupEntityTables();
     }
 
@@ -1051,22 +1046,6 @@ public final class DataManager {
     }
 
     /**
-     * Sets up the graveyards table in the database.
-     *
-     * @throws SQLException if an SQL error occurs.
-     */
-    private void setupGraveyardsTable() throws SQLException {
-        String createTableQuery = "CREATE TABLE IF NOT EXISTS graveyards (" +
-                "name VARCHAR(255) NOT NULL," +
-                "world VARCHAR(255) NOT NULL," +
-                "type VARCHAR(255) NOT NULL," +
-                "serializedLocations TEXT," +
-                "PRIMARY KEY (name, world)" +
-                ");";
-        executeUpdate(createTableQuery, new Object[0]);
-    }
-
-    /**
      * Sets up the hologram table in the database.
      *
      * @throws SQLException if an SQL error occurs.
@@ -1219,121 +1198,6 @@ public final class DataManager {
             plugin.getLogger().severe("A null pointer exception occurred while loading Grave Map: " + exception.getMessage());
             plugin.logStackTrace(exception);
         }
-    }
-
-    /**
-     * Loads graveyards from the database into the provided map.
-     */
-    public void loadGraveyardsMap() {
-        String query = "SELECT * FROM graveyards";  // Select only required columns
-        plugin.getLogger().info("Loading graveyards from the database...");
-
-        try (Connection connection = getConnection();
-             PreparedStatement statement = connection.prepareStatement(query);
-             ResultSet resultSet = statement.executeQuery()) {
-
-            while (resultSet.next()) {
-                String name = resultSet.getString("name");
-                String world = resultSet.getString("world");
-                String type = resultSet.getString("type");
-                String serializedLocations = resultSet.getString("serializedLocations");
-
-                // Ensure the world is not null before attempting to use it
-                World serverWorld = plugin.getServer().getWorld(world);
-                if (serverWorld == null) {
-                    plugin.getLogger().warning("World not found for graveyard '" + name + "': " + world);
-                    continue;
-                }
-
-                plugin.getLogger().info("Loading graveyard: " + name);
-
-                Graveyard.Type graveyardType;
-                try {
-                    graveyardType = Graveyard.Type.valueOf(type.toUpperCase());
-                } catch (IllegalArgumentException e) {
-                    plugin.getLogger().warning("Unknown graveyard type for '" + name + "': " + type);
-                    continue;
-                }
-
-                // Create the graveyard object
-                Graveyard graveyard = new Graveyard(name, serverWorld, graveyardType);
-
-                // Deserialize grave locations
-                Map<Location, BlockFace> locations = Graveyard.deserializeLocations(serializedLocations);
-
-                Location spawnLocation = null;
-
-                // Loop through the grave locations
-                for (Map.Entry<Location, BlockFace> entry : locations.entrySet()) {
-                    Location graveLocation = entry.getKey();
-                    BlockFace graveFacing = entry.getValue();
-
-                    // Set the first grave location as the spawn location (or apply custom logic)
-                    if (spawnLocation == null) {
-                        spawnLocation = graveLocation;
-                    }
-
-                    // Add the grave location to the graveyard
-                    graveyard.addGraveLocation(graveLocation, graveFacing);
-                }
-
-                // Set the spawn location if available
-                if (spawnLocation != null) {
-                    graveyard.setSpawnLocation(spawnLocation);
-                } else {
-                    plugin.getLogger().warning("No valid spawn location found for graveyard '" + name + "'.");
-                }
-
-                // Add to the cache
-                plugin.getCacheManager().getGraveyardsMap().put(name, graveyard);
-                plugin.getLogger().info("Graveyard '" + name + "' loaded with spawn location.");
-            }
-
-            plugin.getLogger().info("All graveyards loaded.");
-        } catch (SQLException e) {
-            String sqlState = e.getSQLState();
-            String message = e.getMessage().toLowerCase();
-            // Ignore errors related to existing tables or columns
-            if ("42701".equals(sqlState)
-                    || "42P07".equals(sqlState)
-                    || "42S01".equals(sqlState)
-                    || "42S04".equals(sqlState)
-                    || "X0Y32".equals(sqlState)
-                    || "42000".equals(sqlState)
-                    || (message.contains("duplicate column name") && "SQLITE_ERROR".equals(sqlState))) {
-                plugin.getLogger().info("All graveyards loaded.");
-            } else {
-                plugin.getLogger().severe("Failed to load graveyards: " + e.getMessage());
-                plugin.logStackTrace(e);
-            }
-        }
-    }
-
-    /**
-     * Updates the graveyard location data in the database.
-     *
-     * @param graveyard The graveyard to update.
-     */
-    public void updateGraveyardLocationData(Graveyard graveyard) {
-        // Serialize graveyard locations as JSON
-        String serializedLocations = Graveyard.serializeLocations(graveyard.getGraveLocationMap());
-        String query = "UPDATE graveyards SET serializedLocations = ? WHERE name = ? AND world = ?";
-
-        // Prepare parameters for the query
-        Object[] parameters = {
-                serializedLocations,
-                graveyard.getName(),
-                graveyard.getWorld().getName()
-        };
-
-        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
-            try {
-                executeUpdate(query, parameters);
-            } catch (SQLException e) {
-                plugin.getLogger().severe("Failed to update graveyard location data: " + e.getMessage());
-                plugin.logStackTrace(e);
-            }
-        });
     }
 
     /**
@@ -1731,169 +1595,6 @@ public final class DataManager {
                 }
             } catch (SQLException e) {
                 plugin.getLogger().severe("Failed to remove entity data: " + e.getMessage());
-                plugin.logStackTrace(e);
-            }
-        });
-    }
-
-    /**
-     * Saves a graveyard to the database.
-     *
-     * @param graveyard The graveyard to save.
-     */
-    public void saveGraveyard(Graveyard graveyard) {
-        String serializedLocations = Graveyard.serializeLocations(graveyard.getGraveLocationMap());
-        plugin.getLogger().info("Saving serialized locations: " + serializedLocations);
-
-        if (graveyardExists(graveyard.getName())) {
-            updateGraveyard(graveyard, serializedLocations);
-        } else {
-            insertGraveyard(graveyard, serializedLocations);
-        }
-    }
-
-    /**
-     * Checks if a graveyard with the specified name exists in the database.
-     *
-     * @param name the name of the graveyard.
-     * @return true if the graveyard exists, false otherwise.
-     */
-    public boolean graveyardExists(String name) {
-        String query = "SELECT COUNT(*) FROM graveyards WHERE name = ?";
-
-        try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement = connection != null ? connection.prepareStatement(query) : null) {
-
-            statement.setString(1, name);
-
-            try (ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    return resultSet.getInt(1) > 0;
-                }
-            }
-        } catch (SQLException e) {
-            plugin.getLogger().severe("Failed to check existence of graveyard: " + e.getMessage());
-            plugin.logStackTrace(e);
-        }
-
-        return false;
-    }
-
-    /**
-     * Updates a graveyard in the database.
-     *
-     * @param graveyard           the graveyard to update.
-     * @param serializedLocations the new serialized locations for the graveyard.
-     */
-    private void updateGraveyard(Graveyard graveyard, String serializedLocations) {
-        String query = "UPDATE graveyards SET world = ?, type = ?, serializedLocations = ? WHERE name = ?";
-
-        Object[] parameters = {
-                graveyard.getWorld().getName(),
-                graveyard.getType().toString(),
-                serializedLocations,
-                graveyard.getName()
-        };
-
-        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
-            try {
-                executeUpdate(query, parameters);
-            } catch (SQLException e) {
-                plugin.getLogger().severe("Failed to update graveyard: " + e.getMessage());
-                plugin.logStackTrace(e);
-            }
-        });
-    }
-
-    /**
-     * Inserts a graveyard into the database.
-     *
-     * @param graveyard           the graveyard to insert.
-     * @param serializedLocations the serialized locations for the graveyard.
-     */
-    private void insertGraveyard(Graveyard graveyard, String serializedLocations) {
-        String query = "INSERT INTO graveyards (name, world, type, serializedLocations) VALUES (?, ?, ?, ?)";
-
-        Object[] parameters = {
-                graveyard.getName(),
-                graveyard.getWorld().getName(),
-                graveyard.getType().toString(),
-                serializedLocations
-        };
-
-        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
-            try {
-                executeUpdate(query, parameters);
-            } catch (SQLException e) {
-                plugin.getLogger().severe("Failed to insert graveyard: " + e.getMessage());
-                plugin.logStackTrace(e);
-            }
-        });
-    }
-
-    /**
-     * Retrieves a graveyard by its name.
-     *
-     * @param graveyardName The name of the graveyard.
-     * @return The Graveyard object if found, otherwise null.
-     */
-    public Graveyard getGraveyardByName(String graveyardName) {
-        String query = "SELECT * FROM graveyards WHERE name = ?";
-
-        try (Connection connection = getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
-
-            statement.setString(1, graveyardName);
-
-            try (ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    String name = resultSet.getString("name");
-                    String world = resultSet.getString("world");
-                    String type = resultSet.getString("type");
-                    String serializedLocations = resultSet.getString("serializedLocations");
-
-                    World serverWorld = plugin.getServer().getWorld(world);
-                    if (serverWorld == null) {
-                        plugin.getLogger().warning("World not found for graveyard '" + name + "': " + world);
-                        return null;
-                    }
-
-                    Graveyard.Type graveyardType = Graveyard.Type.valueOf(type.toUpperCase());
-                    Graveyard graveyard = new Graveyard(name, serverWorld, graveyardType);
-
-                    // Deserialize locations
-                    Map<Location, BlockFace> locations = Graveyard.deserializeLocations(serializedLocations);
-                    for (Map.Entry<Location, BlockFace> entry : locations.entrySet()) {
-                        graveyard.addGraveLocation(entry.getKey(), entry.getValue());
-                    }
-
-                    return graveyard;
-                }
-            }
-        } catch (SQLException e) {
-            plugin.getLogger().severe("Failed to retrieve graveyard: " + e.getMessage());
-        }
-        return null;
-    }
-
-    /**
-     * Deletes a graveyard from the database.
-     *
-     * @param graveyard The graveyard to delete.
-     */
-    public void deleteGraveyard(Graveyard graveyard) {
-        String query = "DELETE FROM graveyards WHERE name = ? AND world = ?";
-
-        Object[] parameters = {
-                graveyard.getName(),
-                graveyard.getWorld().getName()
-        };
-
-        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
-            try {
-                executeUpdate(query, parameters);
-            } catch (SQLException e) {
-                plugin.getLogger().severe("Failed to delete graveyard: " + e.getMessage());
                 plugin.logStackTrace(e);
             }
         });

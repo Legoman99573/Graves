@@ -15,14 +15,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Provides integration with Towny to manage town blocks and graveyard types.
+ * Provides integration with Towny to manage town blocks.
  */
 public final class Towny {
     private final Graves plugin;
     private final Plugin townyPlugin;
     private final TownyAPI townyAPI;
     private final TownBlockTypeRegisterListener townBlockTypeRegisterListener;
-    private TownBlockType graveyardBlockType;
 
     /**
      * Constructs a new Towny integration instance with the specified Graves plugin and Towny plugin.
@@ -36,8 +35,6 @@ public final class Towny {
         this.townyAPI = TownyAPI.getInstance();
         this.townBlockTypeRegisterListener = new TownBlockTypeRegisterListener(this);
 
-        reload();
-        registerGraveyardBlockType();
         registerListeners();
     }
 
@@ -48,35 +45,6 @@ public final class Towny {
      */
     public boolean isEnabled() {
         return townyPlugin.isEnabled();
-    }
-
-    /**
-     * Reloads the graveyard block type configuration.
-     */
-    public void reload() {
-        graveyardBlockType = new TownBlockType("Graveyard", new TownBlockData() {
-            public double getTax(Town town) {
-                return plugin.getConfig().getDouble("settings.graveyard.towny.tax") + town.getPlotTax();
-            }
-        });
-    }
-
-    /**
-     * Registers the graveyard block type with Towny if it doesn't already exist.
-     */
-    public void registerGraveyardBlockType() {
-        if (!TownBlockTypeHandler.exists(graveyardBlockType.getName().toLowerCase())) {
-            registerType(graveyardBlockType);
-        }
-    }
-
-    /**
-     * Gets the graveyard block type.
-     *
-     * @return The graveyard block type.
-     */
-    public TownBlockType getGraveyardBlockType() {
-        return graveyardBlockType;
     }
 
     /**
@@ -124,18 +92,6 @@ public final class Towny {
         }
 
         return false;
-    }
-
-    /**
-     * Gets the TownBlock at a specific location if it is of the graveyard block type.
-     *
-     * @param location The location to check.
-     * @return The TownBlock if it is of the graveyard block type, otherwise {@code null}.
-     */
-    public TownBlock getGraveyardTownBlock(Location location) {
-        TownBlock townBlock = townyAPI.getTownBlock(location);
-
-        return townBlock != null && townBlock.getType() == graveyardBlockType ? townBlock : null;
     }
 
     /**
@@ -227,18 +183,6 @@ public final class Towny {
         TownBlock townBlock = townyAPI.getTownBlock(location);
 
         return townBlock != null && townBlock.getName().equals(name);
-    }
-
-    /**
-     * Checks if a location is of the graveyard block type.
-     *
-     * @param location The location to check.
-     * @return {@code true} if the location is of the graveyard block type, otherwise {@code false}.
-     */
-    public boolean isLocationGraveyardBlockType(Location location) {
-        TownBlock townBlock = townyAPI.getTownBlock(location);
-
-        return townBlock != null && townBlock.getType() == graveyardBlockType;
     }
 
     /**

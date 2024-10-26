@@ -1,6 +1,5 @@
 package com.ranull.graves.integration;
 
-import com.ranull.graves.type.Graveyard;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
@@ -31,7 +30,6 @@ public final class WorldGuard {
     private final com.sk89q.worldguard.WorldGuard worldGuard;
     private final StateFlag createFlag;
     private final StateFlag teleportFlag;
-    private final StateFlag graveyardFlag;
 
     /**
      * Constructs a new WorldGuard integration instance with the specified plugin.
@@ -43,7 +41,6 @@ public final class WorldGuard {
         this.worldGuard = com.sk89q.worldguard.WorldGuard.getInstance();
         this.createFlag = getFlag("graves-create", true);
         this.teleportFlag = getFlag("graves-teleport", true);
-        this.graveyardFlag = getFlag("graves-graveyard", false);
     }
 
     /**
@@ -100,41 +97,6 @@ public final class WorldGuard {
                 }
             }
         }
-    }
-
-    public boolean isInGraveyardRegion(Player player) {
-        RegionContainer container = worldGuard.getPlatform().getRegionContainer();
-        RegionManager regionManager = container.get(BukkitAdapter.adapt(player.getWorld()));
-
-        if (regionManager != null) {
-            ApplicableRegionSet regionSet = regionManager.getApplicableRegions(BukkitAdapter.asBlockVector(player.getLocation()));
-            StateFlag gravesGraveyardFlag = (StateFlag) worldGuard.getFlagRegistry().get("graves-graveyard");
-
-            if (gravesGraveyardFlag != null) {
-                boolean foundGraveyardRegion = false;
-
-                for (ProtectedRegion region : regionSet) {
-                    StateFlag.State flagState = region.getFlag(gravesGraveyardFlag);
-
-                    // If we find a graveyard region, set the flag
-                    if (flagState != null) {
-                        foundGraveyardRegion = true;
-
-                        // If the flag is DENY, the player is NOT in a valid graveyard region
-                        if (flagState == StateFlag.State.DENY) {
-                            return false;
-                        }
-                    } else {
-                        foundGraveyardRegion = true;
-                    }
-                }
-
-                // Return true only if a graveyard region was found and none had a DENY flag
-                return foundGraveyardRegion;
-            }
-        }
-
-        return false; // Return false if no graveyard region exists or no graveyard flag was found
     }
 
     /**
@@ -276,48 +238,6 @@ public final class WorldGuard {
         }
 
         return false;
-    }
-
-    /**
-     * Calculates a rough location for a graveyard based on its WorldGuard region.
-     *
-     * @param graveyard The graveyard to calculate the location for.
-     * @return The calculated location, or {@code null} if the region is not found.
-     */
-    public Location calculateRoughLocation(Graveyard graveyard) {
-        RegionManager regionManager = worldGuard.getPlatform().getRegionContainer()
-                .get(BukkitAdapter.adapt(graveyard.getWorld()));
-
-        if (regionManager != null) {
-            ProtectedRegion protectedRegion = regionManager.getRegion(graveyard.getName());
-
-            if (protectedRegion != null) {
-                int xMax;
-                int yMax;
-                int zMax;
-                int xMin;
-                int yMin;
-                int zMin;
-                try {
-                    xMax = protectedRegion.getMaximumPoint().getBlockX();
-                    yMax = protectedRegion.getMaximumPoint().getBlockY();
-                    zMax = protectedRegion.getMaximumPoint().getBlockZ();
-                    xMin = protectedRegion.getMinimumPoint().getBlockX();
-                    yMin = protectedRegion.getMinimumPoint().getBlockY();
-                    zMin = protectedRegion.getMinimumPoint().getBlockZ();
-                } catch (NoSuchMethodError e) {
-                    xMax = protectedRegion.getMaximumPoint().x();
-                    yMax = protectedRegion.getMaximumPoint().y();
-                    zMax = protectedRegion.getMaximumPoint().z();
-                    xMin = protectedRegion.getMinimumPoint().x();
-                    yMin = protectedRegion.getMinimumPoint().y();
-                    zMin = protectedRegion.getMinimumPoint().z();
-                }
-                return new Location(graveyard.getWorld(), xMax - xMin, yMax - yMin, zMax - zMin);
-            }
-        }
-
-        return null;
     }
 
     /**

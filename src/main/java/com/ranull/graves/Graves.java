@@ -1,7 +1,6 @@
 package com.ranull.graves;
 
 import com.ranull.graves.command.GravesCommand;
-import com.ranull.graves.command.GraveyardsCommand;
 import com.ranull.graves.compatibility.Compatibility;
 import com.ranull.graves.compatibility.CompatibilityBlockData;
 import com.ranull.graves.compatibility.CompatibilityMaterialData;
@@ -54,7 +53,6 @@ public class Graves extends JavaPlugin {
     private RecipeManager recipeManager;
     private LocationManager locationManager;
     private GraveManager graveManager;
-    private GraveyardManager graveyardManager;
     private ParticleManager particleManager;
     private Compatibility compatibility;
     private FileConfiguration fileConfiguration;
@@ -106,7 +104,6 @@ public class Graves extends JavaPlugin {
         entityManager = new EntityManager(this);
         locationManager = new LocationManager(this);
         graveManager = new GraveManager(this);
-        graveyardManager = new GraveyardManager(this);
         particleManager = new ParticleManager(this);
 
         registerCommands();
@@ -164,14 +161,6 @@ public class Graves extends JavaPlugin {
             getLogger().info("Unloaded GraveManager Successfully.");
         } catch (Exception e) {
             getLogger().severe("Failed to unload GraveManager. Cause: " + e.getCause());
-        }
-
-        getLogger().info("Unloading GraveyardManager...");
-        try {
-            graveyardManager.unload();
-            getLogger().info("Unloaded GraveyardManager Successfully.");
-        } catch (Exception e) {
-            getLogger().severe("Failed to unload GraveyardManager. Cause: " + e.getCause());
         }
 
         getLogger().info("Unloading IntegrationManager...");
@@ -476,20 +465,12 @@ public class Graves extends JavaPlugin {
 
     private void registerCommands() {
         PluginCommand gravesPluginCommand = getCommand("graves");
-        PluginCommand graveyardsPluginCommand = getCommand("graveyards");
 
         if (gravesPluginCommand != null) {
             GravesCommand gravesCommand = new GravesCommand(this);
 
             gravesPluginCommand.setExecutor(gravesCommand);
             gravesPluginCommand.setTabCompleter(gravesCommand);
-        }
-
-        if (graveyardsPluginCommand != null) {
-            GraveyardsCommand graveyardsCommand = new GraveyardsCommand(this);
-
-            graveyardsPluginCommand.setExecutor(graveyardsCommand);
-            graveyardsPluginCommand.setTabCompleter(graveyardsCommand);
         }
     }
 
@@ -585,7 +566,6 @@ public class Graves extends JavaPlugin {
             updateConfigFile("config.yml", currentConfigVersion, true);
             updateConfigFile("entity.yml", currentConfigVersion, false);
             updateConfigFile("grave.yml", currentConfigVersion, false);
-            updateConfigFile("graveyard.yml", currentConfigVersion, false);
 
             // Reload the main config after all updates
             reloadConfig();
@@ -594,7 +574,7 @@ public class Graves extends JavaPlugin {
 
     private void backupOutdatedConfigs(double configVersion) {
         File configFolder = new File(getDataFolder(), "config");
-        String[] configFiles = {"config.yml", "entity.yml", "grave.yml", "graveyard.yml"};
+        String[] configFiles = {"config.yml", "entity.yml", "grave.yml"};
 
         File outdatedFolder = new File(getDataFolder(), "outdated");
         outdatedFolder.mkdirs(); // Ensure the directory exists
@@ -787,10 +767,6 @@ public class Graves extends JavaPlugin {
 
     public GraveManager getGraveManager() {
         return graveManager;
-    }
-
-    public GraveyardManager getGraveyardManager() {
-        return graveyardManager;
     }
 
     public HologramManager getHologramManager() {
