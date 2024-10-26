@@ -329,7 +329,7 @@ public class GravesXAPI {
      * @param livingEntity The entity whose removed item stacks are to be retrieved.
      * @return The list of removed item stacks.
      */
-    private List<ItemStack> getRemovedItemStacks(LivingEntity livingEntity) {
+    private List<ItemStack> getRemovedItemStacks(@NotNull LivingEntity livingEntity) {
         List<ItemStack> removedItemStackList = new ArrayList<>();
         if (plugin.getCacheManager().getRemovedItemStackMap().containsKey(livingEntity.getUniqueId())) {
             removedItemStackList.addAll(plugin.getCacheManager().getRemovedItemStackMap().get(livingEntity.getUniqueId()));
@@ -338,7 +338,7 @@ public class GravesXAPI {
         return removedItemStackList;
     }
 
-    private void placeGraveBlocks(Grave grave, Map<Location, BlockData.BlockType> locationMap, LivingEntity livingEntity) {
+    private void placeGraveBlocks(@NotNull Grave grave, @NotNull Map<Location, BlockData.BlockType> locationMap, @NotNull LivingEntity livingEntity) {
         for (Map.Entry<Location, BlockData.BlockType> entry : locationMap.entrySet()) {
             Location location = entry.getKey().clone();
             int offsetX = 0;
@@ -374,7 +374,7 @@ public class GravesXAPI {
      *
      * @param grave the grave to be removed
      */
-    public void removeGrave(Grave grave) {
+    public void removeGrave(@NotNull Grave grave) {
         GraveManager graveManager = plugin.getGraveManager();
         graveManager.removeGrave(grave);
     }
@@ -384,7 +384,7 @@ public class GravesXAPI {
      *
      * @param grave the grave to be broken
      */
-    public void breakGrave(Grave grave) {
+    public void breakGrave(@NotNull Grave grave) {
         GraveManager graveManager = plugin.getGraveManager();
         graveManager.breakGrave(grave);
     }
@@ -395,7 +395,7 @@ public class GravesXAPI {
      * @param location the location where the grave is located
      * @param grave the grave to be broken
      */
-    public void breakGrave(Location location, Grave grave) {
+    public void breakGrave(@NotNull Location location, @NotNull Grave grave) {
         GraveManager graveManager = plugin.getGraveManager();
         graveManager.breakGrave(location, grave);
     }
@@ -407,7 +407,7 @@ public class GravesXAPI {
      * @param location the location of the grave
      * @param grave the grave to be looted
      */
-    public void autoLootGrave(Entity entity, Location location, Grave grave) {
+    public void autoLootGrave(@NotNull Entity entity, @NotNull Location location, @NotNull Grave grave) {
         GraveManager graveManager = plugin.getGraveManager();
         graveManager.autoLootGrave(entity, location, grave);
     }
@@ -417,7 +417,7 @@ public class GravesXAPI {
      *
      * @param grave the grave to be abandoned
      */
-    public void abandonGrave(Grave grave) {
+    public void abandonGrave(@NotNull Grave grave) {
         GraveManager graveManager = plugin.getGraveManager();
         graveManager.abandonGrave(grave);
     }
@@ -428,7 +428,7 @@ public class GravesXAPI {
      * @param location the location where the items will be dropped
      * @param grave the grave whose items are to be dropped
      */
-    public void dropGraveItems(Location location, Grave grave) {
+    public void dropGraveItems(@NotNull Location location, @NotNull Grave grave) {
         GraveManager graveManager = plugin.getGraveManager();
         graveManager.dropGraveItems(location, grave);
     }
@@ -438,7 +438,7 @@ public class GravesXAPI {
      *
      * @param livingEntity the entity whose oldest grave will be removed
      */
-    public void removeOldestGrave(LivingEntity livingEntity) {
+    public void removeOldestGrave(@NotNull LivingEntity livingEntity) {
         GraveManager graveManager = plugin.getGraveManager();
         graveManager.removeOldestGrave(livingEntity);
     }
@@ -452,7 +452,7 @@ public class GravesXAPI {
      * @param replaceData    Additional data to apply to the BlockData.
      * @return A BlockData instance representing the grave at the specified location.
      */
-    public BlockData getBlockData(Location location, UUID graveUUID, String replaceMaterial, String replaceData) {
+    public BlockData getBlockData(@NotNull Location location, @NotNull UUID graveUUID, @NotNull String replaceMaterial, @NotNull String replaceData) {
         return new BlockData(location, graveUUID, replaceMaterial, replaceData);
     }
 
@@ -462,7 +462,7 @@ public class GravesXAPI {
      * @param location The location for which to retrieve the chunk data.
      * @return A ChunkData instance representing the chunk at the specified location.
      */
-    public ChunkData getChunkData(Location location) {
+    public ChunkData getChunkData(@NotNull Location location) {
         return new ChunkData(location);
     }
 
@@ -475,7 +475,7 @@ public class GravesXAPI {
      * @param type         The type of the entity.
      * @return An EntityData instance representing the entity associated with the grave.
      */
-    public EntityData getEntityData(Location location, UUID uuidEntity, UUID uuidGrave, EntityData.Type type) {
+    public EntityData getEntityData(@NotNull Location location, @NotNull UUID uuidEntity, @NotNull UUID uuidGrave, @NotNull EntityData.Type type) {
         return new EntityData(location, uuidEntity, uuidGrave, type);
     }
 
@@ -488,7 +488,7 @@ public class GravesXAPI {
      * @param line        The line number of the hologram to retrieve.
      * @return A HologramData instance representing the hologram associated with the grave.
      */
-    public HologramData getHologramData(Location location, UUID uuidEntity, UUID uuidGrave, int line) {
+    public HologramData getHologramData(@NotNull Location location, @NotNull UUID uuidEntity, @NotNull UUID uuidGrave, int line) {
         return new HologramData(location, uuidEntity, uuidGrave, line);
     }
 
@@ -498,7 +498,7 @@ public class GravesXAPI {
      * @param location The location for which to retrieve data.
      * @return A LocationData instance representing the specified location.
      */
-    public LocationData getLocationData(Location location) {
+    public LocationData getLocationData(@NotNull Location location) {
         return new LocationData(location);
     }
 
@@ -508,7 +508,7 @@ public class GravesXAPI {
      * @param face The BlockFace to simplify.
      * @return The simplified BlockFace.
      */
-    public BlockFace simplifyBlockFace(BlockFace face) {
+    public BlockFace simplifyBlockFace(@NotNull BlockFace face) {
         return BlockFaceUtil.getSimpleBlockFace(face);
     }
 
@@ -518,7 +518,7 @@ public class GravesXAPI {
      * @param face The BlockFace for which to retrieve the rotation.
      * @return The corresponding Rotation for the specified BlockFace.
      */
-    public Rotation getRotationFromBlockFace(BlockFace face) {
+    public Rotation getRotationFromBlockFace(@NotNull BlockFace face) {
         return BlockFaceUtil.getBlockFaceRotation(face);
     }
 
@@ -528,7 +528,7 @@ public class GravesXAPI {
      * @param object The object to encode.
      * @return The Base64 encoded string, or null if encoding fails.
      */
-    public String encodeObjectToBase64(Object object) {
+    public String encodeObjectToBase64(@NotNull Object object) {
         return Base64Util.objectToBase64(object);
     }
 
@@ -538,7 +538,7 @@ public class GravesXAPI {
      * @param base64String The Base64 string to decode.
      * @return The decoded object, or null if decoding fails.
      */
-    public Object decodeBase64ToObject(String base64String) {
+    public Object decodeBase64ToObject(@NotNull String base64String) {
         return Base64Util.base64ToObject(base64String);
     }
 
@@ -547,7 +547,7 @@ public class GravesXAPI {
      *
      * @param className The fully qualified name of the class to be loaded.
      */
-    public void loadClass(String className) {
+    public void loadClass(@NotNull String className) {
         ClassUtil.loadClass(className);
     }
 
@@ -557,7 +557,7 @@ public class GravesXAPI {
      * @param colorName The name of the color as a string.
      * @return The Color corresponding to the given name, or null if no match is found.
      */
-    public Color getColor(String colorName) {
+    public Color getColor(@NotNull String colorName) {
         return ColorUtil.getColor(colorName);
     }
 
@@ -567,7 +567,7 @@ public class GravesXAPI {
      * @param hex The hex color code as a string (e.g., "#FF5733").
      * @return The Color corresponding to the hex color code, or null if the code is invalid.
      */
-    public Color getColorFromHex(String hex) {
+    public Color getColorFromHex(@NotNull String hex) {
         return ColorUtil.getColorFromHex(hex);
     }
 
@@ -578,7 +578,7 @@ public class GravesXAPI {
      * @param size The size of the dust particle.
      * @return A Particle.DustOptions object with the specified color and size, or null if the color code is invalid.
      */
-    public Particle.DustOptions createDustOptionsFromHex(String hexColor, float size) {
+    public Particle.DustOptions createDustOptionsFromHex(@NotNull String hexColor, float size) {
         return ColorUtil.createDustOptionsFromHex(hexColor, size);
     }
 
@@ -591,7 +591,7 @@ public class GravesXAPI {
      *         {@code true} if the method is not found,
      *         or {@code false} if an exception occurs.
      */
-    public boolean hasPermission(Entity entity, String permission) {
+    public boolean hasPermission(@NotNull Entity entity, @NotNull String permission) {
         return EntityUtil.hasPermission(entity, permission);
     }
 
@@ -601,7 +601,7 @@ public class GravesXAPI {
      * @param player The player to get the experience from.
      * @return The total experience of the player.
      */
-    public int getPlayerExperience(Player player) {
+    public int getPlayerExperience(@NotNull Player player) {
         return ExperienceUtil.getPlayerExperience(player);
     }
 
@@ -650,7 +650,7 @@ public class GravesXAPI {
      * @return The amount of experience to drop.
      */
     @Deprecated
-    public int getPlayerDropExperience(Player player, float expStorePercent) {
+    public int getPlayerDropExperience(@NotNull Player player, float expStorePercent) {
         return ExperienceUtil.getPlayerDropExperience(player, expStorePercent);
     }
 
@@ -660,7 +660,7 @@ public class GravesXAPI {
      * @param file The file to be moved.
      * @param name The new name for the file.
      */
-    public void moveFile(File file, String name) {
+    public void moveFile(@NotNull File file, @NotNull String name) {
         FileUtil.moveFile(file, name);
     }
 
@@ -677,7 +677,7 @@ public class GravesXAPI {
      * @param name The new name for the copied file.
      */
     @Deprecated
-    public void copyFile(File file, String name) {
+    public void copyFile(@NotNull File file, @NotNull String name) {
         FileUtil.copyFile(file, name);
     }
 
@@ -697,7 +697,7 @@ public class GravesXAPI {
      * @param inventory The inventory containing the armor items.
      * @param player    The player to be equipped with armor.
      */
-    public void equipArmor(Inventory inventory, Player player) {
+    public void equipArmor(@NotNull Inventory inventory, @NotNull Player player) {
         InventoryUtil.equipArmor(inventory, player);
     }
 
@@ -707,7 +707,7 @@ public class GravesXAPI {
      * @param inventory The inventory containing the items.
      * @param player    The player to be equipped with items.
      */
-    public void equipItems(Inventory inventory, Player player) {
+    public void equipItems(@NotNull Inventory inventory, @NotNull Player player) {
         InventoryUtil.equipItems(inventory, player);
     }
 
@@ -717,7 +717,7 @@ public class GravesXAPI {
      * @param inventory The inventory to be converted.
      * @return The string representation of the inventory.
      */
-    public String inventoryToString(Inventory inventory) {
+    public String inventoryToString(@NotNull Inventory inventory) {
         return InventoryUtil.inventoryToString(inventory);
     }
 
@@ -727,10 +727,9 @@ public class GravesXAPI {
      * @param inventoryHolder The inventory holder.
      * @param string          The string representation of the inventory.
      * @param title           The title of the inventory.
-     * @param plugin          The Graves plugin instance.
      * @return The Inventory object.
      */
-    public Inventory stringToInventory(InventoryHolder inventoryHolder, String string, String title, Graves plugin) {
+    public Inventory stringToInventory(@NotNull InventoryHolder inventoryHolder, @NotNull String string, @NotNull String title) {
         return InventoryUtil.stringToInventory(inventoryHolder, string, title, plugin);
     }
 
@@ -744,7 +743,7 @@ public class GravesXAPI {
      * @param location The location to be rounded.
      * @return A new location with rounded coordinates.
      */
-    public Location roundLocation(Location location) {
+    public Location roundLocation(@NotNull Location location) {
         return LocationUtil.roundLocation(location);
     }
 
@@ -754,7 +753,7 @@ public class GravesXAPI {
      * @param location The location to be converted.
      * @return A string representation of the location in the format "world|x|y|z".
      */
-    public String locationToString(Location location) {
+    public String locationToString(@NotNull Location location) {
         return LocationUtil.locationToString(location);
     }
 
@@ -764,7 +763,7 @@ public class GravesXAPI {
      * @param location The location within the chunk.
      * @return A string representation of the chunk in the format "world|chunkX|chunkZ".
      */
-    public String chunkToString(Location location) {
+    public String chunkToString(@NotNull Location location) {
         return LocationUtil.chunkToString(location);
     }
 
@@ -774,7 +773,7 @@ public class GravesXAPI {
      * @param string The string representation of the chunk in the format "world|chunkX|chunkZ".
      * @return A Location object representing the chunk.
      */
-    public Location chunkStringToLocation(String string) {
+    public Location chunkStringToLocation(@NotNull String string) {
         return LocationUtil.chunkStringToLocation(string);
     }
 
@@ -784,7 +783,7 @@ public class GravesXAPI {
      * @param string The string representation of the location in the format "world|x|y|z".
      * @return A Location object.
      */
-    public Location stringToLocation(String string) {
+    public Location stringToLocation(@NotNull String string) {
         return LocationUtil.stringToLocation(string);
     }
 
@@ -795,7 +794,7 @@ public class GravesXAPI {
      * @param locationList The list of locations to search through.
      * @return The closest location to the base location, or null if the list is empty.
      */
-    public Location getClosestLocation(Location locationBase, List<Location> locationList) {
+    public Location getClosestLocation(@NotNull Location locationBase, @NotNull List<Location> locationList) {
         return LocationUtil.getClosestLocation(locationBase, locationList);
     }
 
@@ -805,7 +804,7 @@ public class GravesXAPI {
      * @param material The material to check.
      * @return True if the material is air, false otherwise.
      */
-    public boolean isAir(Material material) {
+    public boolean isAir(@NotNull Material material) {
         return MaterialUtil.isAir(material);
     }
 
@@ -815,7 +814,7 @@ public class GravesXAPI {
      * @param material The material to check.
      * @return True if the material is lava, false otherwise.
      */
-    public boolean isLava(Material material) {
+    public boolean isLava(@NotNull Material material) {
         return MaterialUtil.isLava(material);
     }
 
@@ -825,7 +824,7 @@ public class GravesXAPI {
      * @param material The material to check.
      * @return True if the material is not solid and safe, false otherwise.
      */
-    public boolean isSafeNotSolid(Material material) {
+    public boolean isSafeNotSolid(@NotNull Material material) {
         return MaterialUtil.isSafeNotSolid(material);
     }
 
@@ -835,7 +834,7 @@ public class GravesXAPI {
      * @param material The material to check.
      * @return True if the material is solid and safe, false otherwise.
      */
-    public boolean isSafeSolid(Material material) {
+    public boolean isSafeSolid(@NotNull Material material) {
         return MaterialUtil.isSafeSolid(material);
     }
 
@@ -845,7 +844,7 @@ public class GravesXAPI {
      * @param material The material to check.
      * @return True if the material is water, false otherwise.
      */
-    public boolean isWater(Material material) {
+    public boolean isWater(@NotNull Material material) {
         return MaterialUtil.isWater(material);
     }
 
@@ -855,7 +854,17 @@ public class GravesXAPI {
      * @param material The material to check.
      * @return True if the material is a player head, false otherwise.
      */
-    public boolean isPlayerHead(Material material) {
+    public boolean isPlayerHead(@NotNull Material material) {
+        return MaterialUtil.isPlayerHead(material);
+    }
+
+    /**
+     * Checks if the given material is a player head.
+     *
+     * @param material The material to check via string.
+     * @return True if the material is a player head, false otherwise.
+     */
+    public boolean isPlayerHead(@NotNull String material) {
         return MaterialUtil.isPlayerHead(material);
     }
 
@@ -865,7 +874,7 @@ public class GravesXAPI {
      * @param content The log content to be posted.
      * @return The URL of the posted log, or null if the post was unsuccessful.
      */
-    public String postLog(String content) {
+    public String postLog(@NotNull String content) {
         return MclogsUtil.postLogToMclogs(content);
     }
 
@@ -876,7 +885,7 @@ public class GravesXAPI {
      * @param permission The permission prefix to search for.
      * @return The highest integer value found for the specified permission prefix. Returns 0 if no such permission is found.
      */
-    public int getHighestInt(Player player, String permission) {
+    public int getHighestInt(@NotNull Player player, @Nullable String permission) {
         return PermissionUtil.getHighestInt(player, permission);
     }
 
@@ -887,7 +896,7 @@ public class GravesXAPI {
      * @param permission The permission prefix to search for.
      * @return The highest double value found for the specified permission prefix. Returns 0 if no such permission is found.
      */
-    public double getHighestDouble(Player player, String permission) {
+    public double getHighestDouble(@NotNull Player player, String permission) {
         return PermissionUtil.getHighestDouble(player, permission);
     }
 
@@ -896,7 +905,7 @@ public class GravesXAPI {
      *
      * @param player The player whose main hand swing animation is to be triggered.
      */
-    public void swingMainHand(Player player) {
+    public void swingMainHand(@NotNull Player player) {
         ReflectionUtil.swingMainHand(player);
     }
 
@@ -906,7 +915,7 @@ public class GravesXAPI {
      * @param inputPath  The path inside the JAR file to copy from.
      * @param outputPath The path on the file system to copy to.
      */
-    public void copyResources(String inputPath, String outputPath) {
+    public void copyResources(@NotNull String inputPath, @NotNull String outputPath) {
         ResourceUtil.copyResources(inputPath, outputPath, plugin);
     }
 
@@ -917,7 +926,7 @@ public class GravesXAPI {
      * @param outputPath The path on the file system to copy to.
      * @param overwrite  Whether to overwrite existing files.
      */
-    public void copyResources(String inputPath, String outputPath, boolean overwrite) {
+    public void copyResources(@NotNull String inputPath, @NotNull String outputPath, boolean overwrite) {
         ResourceUtil.copyResources(inputPath, outputPath, overwrite, plugin);
     }
 
@@ -927,7 +936,7 @@ public class GravesXAPI {
      * @param entity The entity whose skin signature is to be retrieved.
      * @return The skin signature of the player, or null if the entity is not a player or the signature could not be retrieved.
      */
-    public String getSkinSignature(Entity entity) {
+    public String getSkinSignature(@NotNull Entity entity) {
         return SkinSignatureUtil.getSignature(entity);
     }
 
@@ -938,7 +947,7 @@ public class GravesXAPI {
      * @param name   The name associated with the texture.
      * @param base64 The Base64 encoded texture.
      */
-    public void setSkullTexture(Skull skull, String name, String base64) {
+    public void setSkullTexture(@NotNull Skull skull, @NotNull String name, @NotNull String base64) {
         SkinTextureUtil.setSkullBlockTexture(skull, name, base64);
     }
 
@@ -949,7 +958,7 @@ public class GravesXAPI {
      * @param name      The name associated with the texture.
      * @param base64    The Base64 encoded texture.
      */
-    public void setSkullTexture(SkullMeta skullMeta, String name, String base64) {
+    public void setSkullTexture(@NotNull SkullMeta skullMeta, @NotNull String name, @NotNull String base64) {
         SkinTextureUtil.setSkullBlockTexture(skullMeta, name, base64);
     }
 
@@ -959,7 +968,7 @@ public class GravesXAPI {
      * @param entity The entity from which to get the texture.
      * @return The Base64 encoded texture string, or null if not found.
      */
-    public String getTexture(Entity entity) {
+    public String getTexture(@NotNull Entity entity) {
         return SkinTextureUtil.getTexture(entity);
     }
 
@@ -969,7 +978,7 @@ public class GravesXAPI {
      * @param player The player from which to get the GameProfile.
      * @return The GameProfile of the player, or null if not found.
      */
-    public GameProfile getPlayerGameProfile(Player player) {
+    public GameProfile getPlayerGameProfile(@NotNull Player player) {
         return SkinTextureUtil.getPlayerGameProfile(player);
     }
 
@@ -979,7 +988,7 @@ public class GravesXAPI {
      * @param string The string to convert to a UUID.
      * @return The UUID if the string is a valid UUID format, otherwise null.
      */
-    public UUID getUUID(String string) {
+    public UUID getUUID(@NotNull String string) {
         return UUIDUtil.getUUID(string);
     }
 
@@ -999,7 +1008,7 @@ public class GravesXAPI {
      * @param file The file to check.
      * @return True if the file is a valid YAML file, otherwise false.
      */
-    public boolean isValidYAML(File file) {
+    public boolean isValidYAML(@NotNull File file) {
         return YAMLUtil.isValidYAML(file);
     }
 
@@ -1014,7 +1023,7 @@ public class GravesXAPI {
      * @return true if the location matches the grave's death location, false otherwise.
      */
     @Deprecated
-    public boolean isGrave(Grave grave) {
+    public boolean isGrave(@NotNull Grave grave) {
         return isGrave(grave, grave.getLocationDeath());
     }
 
@@ -1025,8 +1034,51 @@ public class GravesXAPI {
      * @param location the location to compare with the grave's death location
      * @return true if the location matches the grave's death location, false otherwise.
      */
-    public boolean isGrave(Grave grave, Location location) {
+    public boolean isGrave(@NotNull Grave grave, @NotNull Location location) {
         return location.equals(grave.getLocationDeath());
+    }
+
+    /**
+     * Returns the total number of graves for all players.
+     * <p>
+     * This method calls {@link #getGraveAmount(Player)} with a {@code null} argument
+     * to count graves without filtering by any specific player.
+     *
+     * @return the total count of graves for all players.
+     */
+    public long getGraveAmount() {
+        return getGraveAmount(null);
+    }
+
+    /**
+     * Returns the number of graves associated with a specified player.
+     * <p>
+     * If {@code targetPlayer} is provided, only graves owned by this player will be counted.
+     * If {@code targetPlayer} is {@code null}, all graves are counted.
+     *
+     * @param targetPlayer the player whose graves should be counted; if {@code null},
+     *                     counts graves for all players.
+     * @return the number of graves associated with {@code targetPlayer}, or the total
+     *         count of all graves if {@code targetPlayer} is {@code null}.
+     */
+    public long getGraveAmount(@Nullable Player targetPlayer) {
+        List<Grave> graveList = new ArrayList<>(plugin.getCacheManager().getGraveMap().values());
+        UUID playerUUID = null;
+        if (targetPlayer != null) {
+            playerUUID = targetPlayer.getUniqueId();
+        }
+        long graveCount = 0;
+
+        for (Grave grave : graveList) {
+            if (playerUUID != null) {
+                if (grave.getOwnerUUID().equals(playerUUID)) {
+                    graveCount++; // Filter to the current player
+                }
+            } else {
+                graveCount++; // Count all graves
+            }
+        }
+        return graveCount;
     }
 
     /**
