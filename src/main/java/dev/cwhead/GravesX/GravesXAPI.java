@@ -439,6 +439,15 @@ public class GravesXAPI {
     }
 
     /**
+     * Gets the grave type
+     *
+     * @param uuid the uuid of the grave
+     */
+    public Grave getGrave(@NotNull UUID uuid) {
+        return new Grave(uuid);
+    }
+
+    /**
      * Retrieves the BlockData associated with a grave at a given location.
      *
      * @param location       The location of the grave.
