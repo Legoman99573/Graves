@@ -30,7 +30,7 @@ public class GraveParticleEvent extends GraveEvent {
      * @param grave  The grave being created.
      */
     public GraveParticleEvent(Player player, Grave grave) {
-        super(grave, player, grave.getLocationDeath(), null, player, null, null, null, player);
+        super(grave, player, grave.getLocationDeath(), null, player, null, grave.getLocationDeath().getBlock(), null, player);
     }
 
     /**

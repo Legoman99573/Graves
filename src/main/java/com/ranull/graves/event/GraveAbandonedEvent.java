@@ -29,7 +29,7 @@ public class GraveAbandonedEvent extends GraveEvent {
      *              of abandonment is automatically set from the grave's death location.
      */
     public GraveAbandonedEvent(Grave grave) {
-        super(grave, null, grave.getLocationDeath(), null, null, null, null, null, null);
+        super(grave, null, grave.getLocationDeath(), null, null, null, grave.getLocationDeath().getBlock(), null, null);
     }
 
     /**

@@ -31,7 +31,7 @@ public class GraveCreateEvent extends GraveEvent {
      * @param grave  The grave being created.
      */
     public GraveCreateEvent(Entity entity, Grave grave) {
-        super(grave, entity, grave.getLocationDeath(), null, (LivingEntity) entity, null, null, null, (Player) entity);
+        super(grave, entity, grave.getLocationDeath(), null, (LivingEntity) entity, null, grave.getLocationDeath().getBlock(), null, (Player) entity);
     }
 
     /**

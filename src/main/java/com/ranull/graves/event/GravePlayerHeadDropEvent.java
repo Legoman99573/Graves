@@ -34,7 +34,7 @@ public class GravePlayerHeadDropEvent extends GraveEvent {
      * @param entity   The entity for which the player head will be dropped.
      */
     public GravePlayerHeadDropEvent(Grave grave, Location location, @Nullable Entity entity) {
-        super(grave, entity, location, null, (LivingEntity) entity, null, null, null, (Player) entity);
+        super(grave, entity, location, null, (LivingEntity) entity, null, grave.getLocationDeath().getBlock(), null, (Player) entity);
     }
 
     /**

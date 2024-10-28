@@ -23,7 +23,7 @@ public class GraveProtectionExpiredEvent extends GraveEvent {
      * @param grave The grave whose protection is expiring.
      */
     public GraveProtectionExpiredEvent(Grave grave) {
-        super(grave, null, grave.getLocationDeath(), null, null, null,null, null, null);
+        super(grave, null, grave.getLocationDeath(), null, null, null,grave.getLocationDeath().getBlock(), null, null);
     }
 
     /**
