@@ -312,7 +312,7 @@ public class GravesXAPI {
             if (victim instanceof Player) {
                 Player player = (Player) victim;
                 player.getPlayer();
-                player.playSound(grave.getLocationDeath(), plugin.getVersionManager().getSoundFromVersion("BLOCK_BELL_USE"), 1.0f, 0.93f);
+                player.playSound(player.getLocation(), plugin.getVersionManager().getSoundFromVersion("BLOCK_BELL_USE"), 1.0f, 0.93f);
             }
 
             if (integrationManager.hasMultiPaper()) {
