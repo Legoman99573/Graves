@@ -219,7 +219,7 @@ public class Graves extends JavaPlugin {
         }
 
         libraryLoaderUtil.loadLibrary("org{}postgresql", "postgresql", "42.7.4", "org{}postgresql", "com{}ranull{}graves{}libraries{}postgresql", false);
-        libraryLoaderUtil.loadLibrary("org{}mariadb{}jdbc", "mariadb-java-client", "3.4.1", "org{}mariadb", "com{}ranull{}graves{}libraries{}mariadb", false);
+        libraryLoaderUtil.loadLibrary("org{}mariadb{}jdbc", "mariadb-java-client", "3.5.0", "org{}mariadb", "com{}ranull{}graves{}libraries{}mariadb", false);
         libraryLoaderUtil.loadLibrary("com{}mysql", "mysql-connector-j", "9.1.0", "com{}mysql", "com{}ranull{}graves{}libraries{}mysql", false);
         libraryLoaderUtil.loadLibrary("com{}h2database", "h2", "2.3.232", "org{}h2", "com{}ranull{}graves{}libraries{}h2", false);
         //libraryLoaderUtil.loadLibrary("org{}slf4j", "slf4j-simple", "2.0.16", false);
