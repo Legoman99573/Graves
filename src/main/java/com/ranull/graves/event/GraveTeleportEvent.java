@@ -3,6 +3,7 @@ package com.ranull.graves.event;
 import com.ranull.graves.type.Grave;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
@@ -31,7 +32,7 @@ public class GraveTeleportEvent extends GraveEvent {
      * @param entity   The entity who is teleporting to the grave.
      */
     public GraveTeleportEvent(Grave grave, Entity entity) {
-        super(grave, entity, grave.getLocationDeath(), null, null, null, null, null, null);
+        super(grave, entity, grave.getLocationDeath(), null, (LivingEntity) entity, null, null, null, (Player) entity);
     }
 
     /**

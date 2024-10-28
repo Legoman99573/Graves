@@ -3,6 +3,7 @@ package com.ranull.graves.event;
 import com.ranull.graves.type.Grave;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
@@ -31,7 +32,7 @@ public class GraveZombieSpawnEvent extends GraveEvent {
      * @param grave           The grave associated with the event.
      */
     public GraveZombieSpawnEvent(Location location, LivingEntity targetEntity, Grave grave) {
-        super(grave, null, location, null, null, null, null, targetEntity, null);
+        super(grave, targetEntity, location, null, targetEntity, null, null, targetEntity, (Player) targetEntity);
     }
 
     /**

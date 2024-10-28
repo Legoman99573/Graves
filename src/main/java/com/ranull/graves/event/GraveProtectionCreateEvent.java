@@ -2,6 +2,8 @@ package com.ranull.graves.event;
 
 import com.ranull.graves.type.Grave;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,7 +31,7 @@ public class GraveProtectionCreateEvent extends GraveEvent {
      * @param grave  The grave being protected.
      */
     public GraveProtectionCreateEvent(Entity entity, Grave grave) {
-        super(grave, entity, grave.getLocationDeath(), null, null, null, null, null, null);
+        super(grave, entity, grave.getLocationDeath(), null, (LivingEntity) entity, null, null, null, (Player) entity);
     }
 
     /**

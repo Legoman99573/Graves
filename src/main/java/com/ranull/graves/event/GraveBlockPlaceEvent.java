@@ -5,6 +5,7 @@ import com.ranull.graves.type.Grave;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
@@ -33,7 +34,7 @@ public class GraveBlockPlaceEvent extends GraveEvent {
      * @param livingEntity The Killer
      */
     public GraveBlockPlaceEvent(Grave grave, Location location, BlockData.BlockType blockType, Block block, LivingEntity livingEntity) {
-        super(grave, null, location, null, livingEntity, blockType, block, livingEntity.getKiller(), null);
+        super(grave, livingEntity, location, null, livingEntity, blockType, block, livingEntity.getKiller(), (Player) livingEntity);
     }
 
     /**

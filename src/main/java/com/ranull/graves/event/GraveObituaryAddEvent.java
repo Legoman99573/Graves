@@ -3,6 +3,8 @@ package com.ranull.graves.event;
 import com.ranull.graves.type.Grave;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,7 +33,7 @@ public class GraveObituaryAddEvent extends GraveEvent {
      * @param entity The entity for which the grave is being created.
      */
     public GraveObituaryAddEvent(Grave grave, Location location, @Nullable Entity entity) {
-        super(grave, entity, location, null, null, null, null, null, null);
+        super(grave, entity, location, null, (LivingEntity) entity, null, null, null, (Player) entity);
     }
 
     /**
