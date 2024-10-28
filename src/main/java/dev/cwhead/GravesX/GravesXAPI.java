@@ -24,6 +24,7 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.PluginManager;
+import org.jetbrains.annotations.ApiStatus.Experimental;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -1094,8 +1095,11 @@ public class GravesXAPI {
     /**
      * Retrieves the instance of the {@link Graves} class.
      *
+     * <p><strong>Warning:</strong> Using this method can have undesirable results. Unless you know what you are doing, We recommend using other methods.</p>
+     *
      * @return the {@link Graves} instance.
      */
+    @Experimental
     public Graves getGravesX() {
         return plugin;
     }
