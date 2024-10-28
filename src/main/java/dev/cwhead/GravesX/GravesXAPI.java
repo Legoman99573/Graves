@@ -1092,6 +1092,15 @@ public class GravesXAPI {
     }
 
     /**
+     * Retrieves the instance of the {@link Graves} class.
+     *
+     * @return the {@link Graves} instance.
+     */
+    public Graves getGravesX() {
+        return plugin;
+    }
+
+    /**
      * Gets the instance of the GravesXAPI.
      *
      * @return The instance of the API.
