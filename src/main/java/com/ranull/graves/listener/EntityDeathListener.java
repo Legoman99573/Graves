@@ -492,7 +492,7 @@ public class EntityDeathListener implements Listener {
         } else {
             Player player = (Player) event.getEntity();
             if (player.getPlayer() != null) {
-                player.getPlayer().dropItem(false);
+                player.getPlayer().getInventory().clear();
             }
         }
     }
@@ -734,6 +734,8 @@ public class EntityDeathListener implements Listener {
         plugin.getEntityManager().sendMessage("message.death", livingEntity, grave.getLocationDeath(), grave);
         plugin.getEntityManager().runCommands("event.command.create", livingEntity, grave.getLocationDeath(), grave);
         plugin.getDataManager().addGrave(grave);
+        Player player = (Player) event.getEntity();
+        player.getPlayer().playSound(grave.getLocationDeath(), plugin.getVersionManager().getSoundFromVersion("BLOCK_BELL_USE"), 1.0f, 0.93f);
         if (plugin.getIntegrationManager().hasMultiPaper()) {
             plugin.getIntegrationManager().getMultiPaper().notifyGraveCreation(grave);
         }

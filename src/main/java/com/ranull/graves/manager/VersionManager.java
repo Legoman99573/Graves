@@ -3,6 +3,7 @@ package com.ranull.graves.manager;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 
 /**
@@ -582,6 +583,25 @@ public final class VersionManager {
                 }
                 break;
                 // Add other cases for different materials here
+        }
+        if (toReturn == null) {
+            throw new IllegalArgumentException("Material can't be null. This is a bug.");
+        }
+
+        return toReturn;
+    }
+
+    public Sound getSoundFromVersion(String sound) {
+        Sound toReturn = null;
+        switch (sound) {
+            case "BLOCK_BELL_USE":
+                try {
+                    toReturn = Sound.valueOf("BLOCK_BELL_USE");
+                } catch (NullPointerException | IllegalArgumentException e) {
+                    toReturn = Sound.valueOf("ENTITY_ZOMBIE_AMBIENT");
+                }
+                break;
+                // Add other cases for different sounds here
         }
         if (toReturn == null) {
             throw new IllegalArgumentException("Material can't be null. This is a bug.");

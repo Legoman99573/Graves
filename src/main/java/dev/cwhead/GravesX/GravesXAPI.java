@@ -309,6 +309,12 @@ public class GravesXAPI {
             grave.setInventory(graveManager.getGraveInventory(grave, (LivingEntity) victim, itemStackList, getRemovedItemStacks((LivingEntity) victim), null));
             grave.setEquipmentMap(equipmentMap != null ? equipmentMap : !versionManager.is_v1_7() ? entityManager.getEquipmentMap((LivingEntity) victim, grave) : new HashMap<>());
             dataManager.addGrave(grave);
+            if (victim instanceof Player) {
+                Player player = (Player) victim;
+                player.getPlayer();
+                player.playSound(grave.getLocationDeath(), plugin.getVersionManager().getSoundFromVersion("BLOCK_BELL_USE"), 1.0f, 0.93f);
+            }
+
             if (integrationManager.hasMultiPaper()) {
                 integrationManager.getMultiPaper().notifyGraveCreation(grave);
             }
