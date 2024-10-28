@@ -489,6 +489,11 @@ public class EntityDeathListener implements Listener {
         plugin.getServer().getPluginManager().callEvent(graveCreateEvent);
         if (!graveCreateEvent.isCancelled()) {
             placeGrave(event, grave, graveCreateEvent, graveItemStackList, removedItemStackList, location, livingEntity, permissionList);
+        } else {
+            Player player = (Player) event.getEntity();
+            if (player.getPlayer() != null) {
+                player.getPlayer().dropItem(false);
+            }
         }
     }
 
