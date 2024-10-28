@@ -32,7 +32,7 @@ public class GraveZombieSpawnEvent extends GraveEvent {
      * @param grave           The grave associated with the event.
      */
     public GraveZombieSpawnEvent(Location location, LivingEntity targetEntity, Grave grave) {
-        super(grave, targetEntity, location, null, targetEntity, null, grave.getLocationDeath().getBlock(), targetEntity, (Player) targetEntity);
+        super(grave, targetEntity, location, null, targetEntity, null, null, targetEntity, (Player) targetEntity);
     }
 
     /**

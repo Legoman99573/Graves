@@ -33,7 +33,7 @@ public class GraveObituaryAddEvent extends GraveEvent {
      * @param entity The entity for which the grave is being created.
      */
     public GraveObituaryAddEvent(Grave grave, Location location, @Nullable Entity entity) {
-        super(grave, entity, location, null, (LivingEntity) entity, null, grave.getLocationDeath().getBlock(), null, (Player) entity);
+        super(grave, entity, location, null, (LivingEntity) entity, null, null, null, (Player) entity);
     }
 
     /**

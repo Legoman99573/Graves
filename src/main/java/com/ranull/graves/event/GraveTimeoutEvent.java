@@ -31,7 +31,7 @@ public class GraveTimeoutEvent extends GraveEvent {
      *              of timeout is automatically set from the grave's death location.
      */
     public GraveTimeoutEvent(Grave grave) {
-        super(grave, null, grave.getLocationDeath(), null, null, null, grave.getLocationDeath().getBlock(), null, null);
+        super(grave, null, grave.getLocationDeath(), null, null, null, null, null, null);
     }
 
     /**

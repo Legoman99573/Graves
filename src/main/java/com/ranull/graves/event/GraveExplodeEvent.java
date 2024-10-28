@@ -35,7 +35,7 @@ public class GraveExplodeEvent extends GraveEvent {
      * @param grave    The grave that is exploding.
      */
     public GraveExplodeEvent(Location location, @Nullable Entity entity, Grave grave) {
-        super(grave, entity, location, null, (LivingEntity) entity, null, grave.getLocationDeath().getBlock(), null, (Player) entity);
+        super(grave, entity, location, null, (LivingEntity) entity, null, null, null, (Player) entity);
     }
 
     /**
