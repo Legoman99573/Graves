@@ -4,16 +4,13 @@ import com.ranull.graves.Graves;
 import com.ranull.graves.event.GraveAutoLootEvent;
 import com.ranull.graves.event.GraveBreakEvent;
 import com.ranull.graves.type.Grave;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
 
 /**
  * Listens for BlockBreakEvent to handle interactions with grave blocks and
@@ -86,7 +83,7 @@ public class BlockBreakListener implements Listener {
         graveBreakEvent.setDropItems(plugin.getConfig("drop.break", grave).getBoolean("drop.break"));
         plugin.getServer().getPluginManager().callEvent(graveBreakEvent);
 
-        if (!graveBreakEvent.isCancelled()) {
+        if (!graveBreakEvent.isCancelled() && !graveBreakEvent.isAddon()) {
             if (plugin.getConfig("drop.auto-loot.enabled", grave).getBoolean("drop.auto-loot.enabled")) {
                 handleAutoLoot(event, player, block, grave, graveBreakEvent);
             } else if (graveBreakEvent.isDropItems()) {
@@ -100,7 +97,7 @@ public class BlockBreakListener implements Listener {
             }
 
             finalizeGraveBreak(player, block, grave);
-        } else {
+        } else if (graveBreakEvent.isCancelled() && !graveBreakEvent.isAddon()) {
             event.setCancelled(true);
         }
     }
@@ -118,7 +115,7 @@ public class BlockBreakListener implements Listener {
         GraveAutoLootEvent graveAutoLootEvent = new GraveAutoLootEvent(player, block.getLocation(), grave);
         plugin.getServer().getPluginManager().callEvent(graveAutoLootEvent);
 
-        if (!graveAutoLootEvent.isCancelled()) {
+        if (!graveAutoLootEvent.isCancelled() && !graveAutoLootEvent.isAddon()) {
             plugin.getGraveManager().autoLootGrave(player, block.getLocation(), grave);
 
             if (graveBreakEvent.isDropItems() && plugin.getConfig("drop.auto-loot.break", grave).getBoolean("drop.auto-loot.break")) {

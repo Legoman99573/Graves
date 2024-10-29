@@ -4,7 +4,6 @@ import com.ranull.graves.Graves;
 import com.ranull.graves.compatibility.CompatibilityInventoryView;
 import com.ranull.graves.event.GraveOpenEvent;
 import com.ranull.graves.type.Grave;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -12,7 +11,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
-import org.bukkit.inventory.InventoryView;
 
 /**
  * Listener for handling InventoryOpenEvent to manage interactions with grave inventories.
@@ -71,8 +69,9 @@ public class InventoryOpenListener implements Listener {
             // Call the custom GraveOpenEvent
             plugin.getServer().getPluginManager().callEvent(graveOpenEvent);
 
-            // Cancel the inventory open event if the GraveOpenEvent was cancelled
-            event.setCancelled(graveOpenEvent.isCancelled());
+            if (graveOpenEvent.isCancelled()) {
+                event.setCancelled(true);
+            }
         }
     }
 }

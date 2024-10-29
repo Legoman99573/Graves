@@ -77,7 +77,7 @@ public final class EntityManager extends EntityDataManager {
         GraveCompassAddEvent graveCompassAddEvent = new GraveCompassAddEvent(player, grave);
         plugin.getServer().getPluginManager().callEvent(graveCompassAddEvent);
 
-        if (!graveCompassAddEvent.isCancelled()) {
+        if (!graveCompassAddEvent.isCancelled() && !graveCompassAddEvent.isAddon()) {
             if (plugin.getVersionManager().hasPersistentData()) {
                 Material material = Material.COMPASS;
 
@@ -223,7 +223,7 @@ public final class EntityManager extends EntityDataManager {
                             GraveTeleportEvent graveTeleportEvent = new GraveTeleportEvent(grave, entity);
 
                             plugin.getServer().getPluginManager().callEvent(graveTeleportEvent);
-                            if (!graveTeleportEvent.isCancelled()) {
+                            if (!graveTeleportEvent.isCancelled() && !graveTeleportEvent.isAddon()) {
                                 if (!plugin.hasGrantedPermission("graves.teleport.delay-bypass", player.getPlayer()) && delayTicks > 0) {
                                     Location finalLocationTeleport1 = locationTeleport;
                                     BossBar bossBar;
@@ -296,7 +296,7 @@ public final class EntityManager extends EntityDataManager {
                     } else {
                         GraveTeleportEvent graveTeleportEvent = new GraveTeleportEvent(grave, entity);
                         plugin.getServer().getPluginManager().callEvent(graveTeleportEvent);
-                        if (!graveTeleportEvent.isCancelled()) {
+                        if (!graveTeleportEvent.isCancelled() && !graveTeleportEvent.isAddon()) {
                             if (!plugin.hasGrantedPermission("graves.teleport.delay-bypass", player.getPlayer()) && delayTicks > 0) {
                                 Location finalLocationTeleport = locationTeleport;
                                 BossBar bossBar;
@@ -356,7 +356,7 @@ public final class EntityManager extends EntityDataManager {
                     GraveTeleportEvent graveTeleportEvent = new GraveTeleportEvent(grave, entity);
 
                     plugin.getServer().getPluginManager().callEvent(graveTeleportEvent);
-                    if (!graveTeleportEvent.isCancelled()) {
+                    if (!graveTeleportEvent.isCancelled() && !graveTeleportEvent.isAddon()) {
                         if (delayTicks > 0) {
                             Location finalLocationTeleport2 = locationTeleport;
                             new BukkitRunnable() {
@@ -958,7 +958,7 @@ public final class EntityManager extends EntityDataManager {
             GraveZombieSpawnEvent graveZombieSpawnEvent = new GraveZombieSpawnEvent(location, targetEntity, grave);
 
             plugin.getServer().getPluginManager().callEvent(graveZombieSpawnEvent);
-            if (graveZombieSpawnEvent.isCancelled()) return;
+            if (graveZombieSpawnEvent.isCancelled() || graveZombieSpawnEvent.isAddon()) return;
             String zombieType = plugin.getConfig("zombie.type", grave)
                     .getString("zombie.type", "ZOMBIE").toUpperCase();
             EntityType entityType = EntityType.ZOMBIE;

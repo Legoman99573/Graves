@@ -165,14 +165,14 @@ public class PlayerInteractListener implements Listener {
                             GraveCompassUseEvent graveCompassUseEvent = new GraveCompassUseEvent(player, grave);
                             plugin.getServer().getPluginManager().callEvent(graveCompassUseEvent);
 
-                            if (!graveCompassUseEvent.isCancelled()) {
+                            if (!graveCompassUseEvent.isCancelled() && !graveCompassUseEvent.isAddon()) {
                                 player.getInventory().setItem(player.getInventory().getHeldItemSlot(),
                                         graveCompass);
                                 plugin.getEntityManager().runFunction(player, plugin.getConfig("compass.function", grave).getString("compass.function"), grave);
                                 if (plugin.getConfig("compass.particles.enabled", grave).getBoolean("compass.particles.enabled")) {
                                     GraveParticleEvent graveParticleEvent = new GraveParticleEvent(player, grave);
                                     plugin.getServer().getPluginManager().callEvent(graveParticleEvent);
-                                    if (!graveParticleEvent.isCancelled()) {
+                                    if (!graveParticleEvent.isCancelled() && !graveParticleEvent.isAddon()) {
                                         plugin.getParticleManager().startParticleTrail(player.getLocation(), grave.getLocationDeath(), Particle.valueOf(Objects.requireNonNull(plugin.getConfig("compass.particles.particle", grave).getString("compass.particles.particle")).toUpperCase()), plugin.getConfig("compass.particles.count", grave).getInt("compass.particles.count", 5), plugin.getConfig("compass.particles.speed", grave).getDouble("compass.particles.speed", 0.3), plugin.getConfig("compass.particles.duration", grave).getInt("compass.particles.duration"), player.getUniqueId());
                                     }
                                 }

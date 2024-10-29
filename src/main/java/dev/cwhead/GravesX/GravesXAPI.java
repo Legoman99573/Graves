@@ -303,26 +303,28 @@ public class GravesXAPI {
         try {
             GraveCreateEvent createGrave = new GraveCreateEvent(victim, grave);
             Bukkit.getPluginManager().callEvent(createGrave);
-            locationMap.put(finalLocationDeath, BlockData.BlockType.DEATH);
+            if (!createGrave.isCancelled()) {
+                locationMap.put(finalLocationDeath, BlockData.BlockType.DEATH);
 
-            cacheManager.getGraveMap().put(grave.getUUID(), grave);
-            grave.setLocationDeath(finalLocationDeath);
-            grave.setInventory(graveManager.getGraveInventory(grave, (LivingEntity) victim, itemStackList, getRemovedItemStacks((LivingEntity) victim), null));
-            grave.setEquipmentMap(equipmentMap != null ? equipmentMap : !versionManager.is_v1_7() ? entityManager.getEquipmentMap((LivingEntity) victim, grave) : new HashMap<>());
-            dataManager.addGrave(grave);
-            if (victim instanceof Player) {
-                Player player = (Player) victim;
-                player.getPlayer();
-                player.playSound(player.getLocation(), plugin.getVersionManager().getSoundFromVersion("BLOCK_BELL_USE"), 1.0f, 0.93f);
+                cacheManager.getGraveMap().put(grave.getUUID(), grave);
+                grave.setLocationDeath(finalLocationDeath);
+                grave.setInventory(graveManager.getGraveInventory(grave, (LivingEntity) victim, itemStackList, getRemovedItemStacks((LivingEntity) victim), null));
+                grave.setEquipmentMap(equipmentMap != null ? equipmentMap : !versionManager.is_v1_7() ? entityManager.getEquipmentMap((LivingEntity) victim, grave) : new HashMap<>());
+                dataManager.addGrave(grave);
+                if (victim instanceof Player) {
+                    Player player = (Player) victim;
+                    player.getPlayer();
+                    player.playSound(player.getLocation(), plugin.getVersionManager().getSoundFromVersion("BLOCK_BELL_USE"), 1.0f, 0.93f);
+                }
+
+                if (integrationManager.hasMultiPaper()) {
+                    integrationManager.getMultiPaper().notifyGraveCreation(grave);
+                }
+                placeGraveBlocks(grave, locationMap, (LivingEntity) victim);
+
+                plugin.debugMessage("Creating grave " + grave.getUUID() + " for entity " + victim + " through the GravesX API", 1);
+
             }
-
-            if (integrationManager.hasMultiPaper()) {
-                integrationManager.getMultiPaper().notifyGraveCreation(grave);
-            }
-            placeGraveBlocks(grave, locationMap, (LivingEntity) victim);
-
-            plugin.debugMessage("Creating grave " + grave.getUUID() + " for entity " + victim + " through the GravesX API", 1);
-
         } catch (Exception e) {
             plugin.getLogger().severe("An error occurred while creating grave " + grave.getUUID() + " for entity " + victim + " through the GravesX API. Cause: " + e.getCause());
             plugin.getLogger().severe("Exception Message: " + e.getMessage());

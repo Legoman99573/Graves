@@ -84,7 +84,9 @@ public class InventoryCloseListener implements Listener {
      */
     private void callGraveCloseEvent(InventoryCloseEvent event, Grave grave, Player player, Entity entity) {
         GraveCloseEvent graveCloseEvent = new GraveCloseEvent(event.getView(), grave, player);
-        plugin.getServer().getPluginManager().callEvent(graveCloseEvent);
+        if (!graveCloseEvent.isAddon()) {
+            plugin.getServer().getPluginManager().callEvent(graveCloseEvent);
+        }
     }
 
     /**
@@ -116,19 +118,23 @@ public class InventoryCloseListener implements Listener {
      * @param grave  The empty grave.
      */
     private void handleEmptyGrave(InventoryCloseEvent event, Player player, Grave grave, Entity entity) {
-        callGraveLootedEvent(event, grave, player, entity);
+        GraveLootedEvent graveLootedEvent = new GraveLootedEvent(event.getView(), grave, player);
+        plugin.getServer().getPluginManager().callEvent(graveLootedEvent);
+
         // Remove the player from the grave's viewers
         grave.getInventory().getViewers().remove(player);
 
-        // Execute commands and send messages related to the grave
-        plugin.getEntityManager().runCommands("event.command.loot", player, player.getLocation(), grave);
-        plugin.getEntityManager().sendMessage("message.looted", player, player.getLocation(), grave);
+        if (!graveLootedEvent.isCancelled() && !graveLootedEvent.isAddon()) {
+            // Execute commands and send messages related to the grave
+            plugin.getEntityManager().runCommands("event.command.loot", player, player.getLocation(), grave);
+            plugin.getEntityManager().sendMessage("message.looted", player, player.getLocation(), grave);
 
-        // Spawn a zombie at the grave's death location
-        plugin.getEntityManager().spawnZombie(grave.getLocationDeath(), player, player, grave);
+            // Spawn a zombie at the grave's death location
+            plugin.getEntityManager().spawnZombie(grave.getLocationDeath(), player, player, grave);
 
-        // Award experience and remove the grave
-        plugin.getGraveManager().giveGraveExperience(player, grave);
-        plugin.getGraveManager().removeGrave(grave);
+            // Award experience and remove the grave
+            plugin.getGraveManager().giveGraveExperience(player, grave);
+            plugin.getGraveManager().removeGrave(grave);
+        }
     }
 }

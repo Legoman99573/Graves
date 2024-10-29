@@ -487,9 +487,9 @@ public class EntityDeathListener implements Listener {
         setupGraveProtection(livingEntity, grave);
         GraveCreateEvent graveCreateEvent = new GraveCreateEvent(livingEntity, grave);
         plugin.getServer().getPluginManager().callEvent(graveCreateEvent);
-        if (!graveCreateEvent.isCancelled()) {
+        if (!graveCreateEvent.isCancelled() && !graveCreateEvent.isAddon()) {
             placeGrave(event, grave, graveCreateEvent, graveItemStackList, removedItemStackList, location, livingEntity, permissionList);
-        } else {
+        } else if (graveCreateEvent.isCancelled() && !graveCreateEvent.isAddon()) {
             Player player = (Player) event.getEntity();
             if (player.getPlayer() != null) {
                 player.getPlayer().getInventory().clear();
@@ -585,7 +585,7 @@ public class EntityDeathListener implements Listener {
         if (plugin.getConfig("protection.enabled", grave).getBoolean("protection.enabled")) {
             GraveProtectionCreateEvent graveProtectionCreateEvent = new GraveProtectionCreateEvent(livingEntity, grave);
             plugin.getServer().getPluginManager().callEvent(graveProtectionCreateEvent);
-            if (!graveProtectionCreateEvent.isCancelled()) {
+            if (!graveProtectionCreateEvent.isCancelled() && !graveProtectionCreateEvent.isAddon()) {
                 grave.setProtection(true);
                 grave.setTimeProtection(plugin.getConfig("protection.time", grave).getInt("protection.time") * 1000L);
             }
@@ -653,7 +653,7 @@ public class EntityDeathListener implements Listener {
                 GraveObituaryAddEvent graveObituaryAddEvent = new GraveObituaryAddEvent(grave, location, livingEntity);
                 plugin.getServer().getPluginManager().callEvent(graveObituaryAddEvent);
 
-                if (!graveObituaryAddEvent.isCancelled()) {
+                if (!graveObituaryAddEvent.isCancelled() && !graveObituaryAddEvent.isAddon()) {
                     if (shouldDrop) {
                         ItemStack obituaryItem = plugin.getItemStackManager().getGraveObituary(grave);
                         if (location.getWorld() != null) {
@@ -701,7 +701,7 @@ public class EntityDeathListener implements Listener {
             GravePlayerHeadDropEvent gravePlayerHeadDropEvent = new GravePlayerHeadDropEvent(grave, location, livingEntity);
             plugin.getServer().getPluginManager().callEvent(gravePlayerHeadDropEvent);
 
-            if (!gravePlayerHeadDropEvent.isCancelled()) {
+            if (!gravePlayerHeadDropEvent.isCancelled() && !gravePlayerHeadDropEvent.isAddon()) {
                 if (shouldDrop) {
                     if (location.getWorld() != null) {
                         ItemStack headItem = plugin.getItemStackManager().getGraveHead(grave);
@@ -768,7 +768,7 @@ public class EntityDeathListener implements Listener {
             location.add(offsetX, offsetY, offsetZ);
             GraveBlockPlaceEvent graveBlockPlaceEvent = new GraveBlockPlaceEvent(grave, location, entry.getValue(), entry.getKey().getBlock(), livingEntity);
             plugin.getServer().getPluginManager().callEvent(graveBlockPlaceEvent);
-            if (!graveBlockPlaceEvent.isCancelled()) {
+            if (!graveBlockPlaceEvent.isCancelled() && !graveBlockPlaceEvent.isAddon()) {
                 plugin.getGraveManager().placeGrave(graveBlockPlaceEvent.getLocation(), grave);
                 plugin.getEntityManager().sendMessage("message.block", livingEntity, location, grave);
                 plugin.getEntityManager().runCommands("event.command.block", livingEntity, graveBlockPlaceEvent.getLocation(), grave);

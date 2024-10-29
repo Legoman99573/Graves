@@ -145,7 +145,7 @@ public final class GraveManager {
         GraveTimeoutEvent graveTimeoutEvent = new GraveTimeoutEvent(grave);
         plugin.getServer().getPluginManager().callEvent(graveTimeoutEvent);
 
-        if (!graveTimeoutEvent.isCancelled()) {
+        if (!graveTimeoutEvent.isCancelled() && !graveTimeoutEvent.isAddon()) {
             plugin.debugMessage("GraveTimeoutEvent not cancelled for grave: " + grave.getUUID(), 2);
             if (plugin.getConfig("drop.timeout", grave).getBoolean("drop.timeout")) {
                 if (graveTimeoutEvent.getLocation() != null) {
@@ -177,7 +177,7 @@ public final class GraveManager {
                 GraveAbandonedEvent graveAbandonedEvent = new GraveAbandonedEvent(grave);
                 plugin.getServer().getPluginManager().callEvent(graveAbandonedEvent);
 
-                if (!graveAbandonedEvent.isCancelled()) {
+                if (!graveAbandonedEvent.isCancelled() && !graveAbandonedEvent.isAddon()) {
                     if (grave.getOwnerType() == EntityType.PLAYER && grave.getOwnerUUID() != null) {
                         Player player = plugin.getServer().getPlayer(grave.getOwnerUUID());
                         if (player != null && player.isOnline()) {
@@ -186,7 +186,7 @@ public final class GraveManager {
                         grave.setTimeAliveRemaining(-1);
                         abandonGrave(grave);
                     }
-                } else {
+                } else if (graveAbandonedEvent.isCancelled() && !graveAbandonedEvent.isAddon()) {
                     if (grave.getOwnerType() == EntityType.PLAYER && grave.getOwnerUUID() != null) {
                         Player player = plugin.getServer().getPlayer(grave.getOwnerUUID());
                         if (player != null && player.isOnline()) {
@@ -204,7 +204,7 @@ public final class GraveManager {
                 }
                 graveRemoveList.add(grave);
             }
-        } else {
+        } else if (graveTimeoutEvent.isCancelled() && !graveTimeoutEvent.isAddon()) {
             // Log the cancellation and set the grave's time to -1
             plugin.debugMessage("GraveTimeoutEvent cancelled for grave: " + grave.getUUID() + ", setting time alive to forever.", 2);
             grave.setTimeAliveRemaining(-1);
@@ -402,12 +402,12 @@ public final class GraveManager {
             plugin.getServer().getPluginManager().callEvent(event);
 
             // If the event is cancelled, revert the protection state
-            if (event.isCancelled()) {
+            if (event.isCancelled() && !event.isAddon()) {
                 grave.setProtection(true);
                 plugin.debugMessage("GraveProtectionExpiredEvent called for grave: " + grave.getUUID(), 2);
                 plugin.getDataManager().updateGrave(grave, "protection", 1);
                 grave.setTimeProtection(-1);
-            } else {
+            } else if (!event.isCancelled() && !event.isAddon()) {
                 // Log the grave details
                 plugin.debugMessage("Grave protection expired for grave: " + grave.getUUID(), 1);
                 plugin.getDataManager().updateGrave(grave, "protection", grave.getProtection() ? 1 : 0);

@@ -102,7 +102,7 @@ public class EntityExplodeListener implements Listener {
         GraveExplodeEvent graveExplodeEvent = new GraveExplodeEvent(location, event.getEntity(), grave);
         plugin.getServer().getPluginManager().callEvent(graveExplodeEvent);
 
-        if (!graveExplodeEvent.isCancelled()) {
+        if (!graveExplodeEvent.isCancelled() && !graveExplodeEvent.isAddon()) {
             if (plugin.getConfig("drop.explode", grave).getBoolean("drop.explode")) {
                 plugin.getGraveManager().breakGrave(location, grave);
             } else {
@@ -116,7 +116,7 @@ public class EntityExplodeListener implements Listener {
             if (plugin.getConfig("zombie.explode", grave).getBoolean("zombie.explode")) {
                 plugin.getEntityManager().spawnZombie(location, grave);
             }
-        } else {
+        } else if (graveExplodeEvent.isCancelled() && !graveExplodeEvent.isAddon()) {
             iterator.remove();
         }
     }

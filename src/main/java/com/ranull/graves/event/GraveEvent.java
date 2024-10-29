@@ -1,6 +1,7 @@
 package com.ranull.graves.event;
 
 import com.ranull.graves.data.BlockData;
+import com.ranull.graves.event.interfaces.Addon;
 import com.ranull.graves.type.Grave;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -24,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
  * to prevent the event from proceeding.
  * </p>
  */
-public abstract class GraveEvent extends Event implements Cancellable {
+public abstract class GraveEvent extends Event implements Cancellable, Addon {
     /**
      * A static final instance of {@link HandlerList} used to manage event handlers.
      * <p>
@@ -123,6 +124,14 @@ public abstract class GraveEvent extends Event implements Cancellable {
     private boolean dropItems;
 
     /**
+     * Indicates whether the event is an Addon
+     * <p>
+     * This {@code boolean} flag is used to determine if the event should be an addon or not.
+     * </p>
+     */
+    private boolean isAddon;
+
+    /**
      * Constructs a new {@code GraveEvent}.
      *
      * @param grave           The grave associated with the event.
@@ -147,6 +156,7 @@ public abstract class GraveEvent extends Event implements Cancellable {
         this.player = player;
         this.isCancelled = false;
         this.dropItems = true;
+        this.isAddon = false;
     }
 
     /**
@@ -305,6 +315,26 @@ public abstract class GraveEvent extends Event implements Cancellable {
     @Override
     public void setCancelled(boolean cancel) {
         isCancelled = cancel;
+    }
+
+    /**
+     * Checks if the event is an addon hook.
+     *
+     * @return {@code true} if this is an addon, {@code false} otherwise.
+     */
+    @Override
+    public boolean isAddon() {
+        return isAddon;
+    }
+
+    /**
+     * Sets the addon status for the current event.
+     *
+     * @param addon {@code true} to mark as an addon, {@code false} otherwise.
+     */
+    @Override
+    public void setAddon(boolean addon) {
+        isAddon = addon;
     }
 
     /**

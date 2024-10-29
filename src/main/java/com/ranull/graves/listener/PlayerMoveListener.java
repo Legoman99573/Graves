@@ -8,7 +8,6 @@ import com.ranull.graves.integration.MiniMessage;
 import com.ranull.graves.type.Grave;
 import com.ranull.graves.util.LocationUtil;
 import com.ranull.graves.util.StringUtil;
-import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.Location;
@@ -139,7 +138,7 @@ public class PlayerMoveListener implements Listener {
                 GraveAutoLootEvent graveAutoLootEvent = new GraveAutoLootEvent(player, location, grave);
 
                 plugin.getServer().getPluginManager().callEvent(graveAutoLootEvent);
-                if (!graveAutoLootEvent.isCancelled()) {
+                if (!graveAutoLootEvent.isCancelled() && !graveAutoLootEvent.isAddon()) {
                     plugin.getGraveManager().autoLootGrave(player, location, grave);
                 }
             }
