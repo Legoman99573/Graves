@@ -543,7 +543,7 @@ public class Graves extends JavaPlugin {
     }
 
     private void updateConfig() {
-        int currentConfigVersion = 16;
+        int currentConfigVersion = 17;
         File configFolder = new File(getDataFolder(), "config");
 
         // Load the main config file to check the version
