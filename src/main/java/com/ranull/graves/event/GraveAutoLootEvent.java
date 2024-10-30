@@ -33,7 +33,7 @@ public class GraveAutoLootEvent extends GraveEvent {
      * @param grave    The grave that is being looted.
      */
     public GraveAutoLootEvent(Entity entity, Location location, Grave grave) {
-        super(grave, entity, location, null, (LivingEntity) entity, null, null, null, (Player) entity);
+        super(grave, entity, location, null, null, null, null, null, null);
     }
 
     /**

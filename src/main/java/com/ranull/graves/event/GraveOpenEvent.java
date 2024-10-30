@@ -33,7 +33,7 @@ public class GraveOpenEvent extends GraveEvent {
      * @param player        The player who is opening the inventory.
      */
     public GraveOpenEvent(InventoryView inventoryView, Grave grave, Player player) {
-        super(grave, player, grave.getLocationDeath(), inventoryView, player, null, null, null, player);
+        super(grave, null, grave.getLocationDeath(), inventoryView, null, null, null, null, player);
     }
 
     /**

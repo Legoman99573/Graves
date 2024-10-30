@@ -30,7 +30,7 @@ public class GraveCompassAddEvent extends GraveEvent {
      * @param grave  The grave being created.
      */
     public GraveCompassAddEvent(Player player, Grave grave) {
-        super(grave, player, grave.getLocationDeath(), null, player, null, null, null, player);
+        super(grave, null, grave.getLocationDeath(), null, null, null, null, null, player);
     }
 
     /**

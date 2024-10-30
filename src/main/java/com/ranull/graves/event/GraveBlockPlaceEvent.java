@@ -34,7 +34,7 @@ public class GraveBlockPlaceEvent extends GraveEvent {
      * @param livingEntity The Killer
      */
     public GraveBlockPlaceEvent(Grave grave, Location location, BlockData.BlockType blockType, Block block, LivingEntity livingEntity) {
-        super(grave, livingEntity, location, null, livingEntity, blockType, block, livingEntity.getKiller(), (Player) livingEntity);
+        super(grave, null, location, null, livingEntity, blockType, block, null, null);
     }
 
     /**
