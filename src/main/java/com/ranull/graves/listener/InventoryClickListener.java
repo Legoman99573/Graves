@@ -1,6 +1,7 @@
 package com.ranull.graves.listener;
 
 import com.ranull.graves.Graves;
+import com.ranull.graves.compatibility.CompatibilityInventoryView;
 import com.ranull.graves.integration.MiniMessage;
 import com.ranull.graves.inventory.GraveList;
 import com.ranull.graves.inventory.GraveMenu;
@@ -212,8 +213,8 @@ public class InventoryClickListener implements Listener {
             if (plugin.getEntityManager().canOpenGrave(player, grave)) {
                 Inventory clickedInventory = event.getClickedInventory();
                 InventoryAction action = event.getAction();
-                Inventory topInventory = event.getView().getTopInventory(); // The grave's inventory
-                Inventory bottomInventory = event.getView().getBottomInventory(); // The player's inventory
+                Inventory topInventory = CompatibilityInventoryView.getTopInventory(event); // The grave's inventory
+                Inventory bottomInventory = CompatibilityInventoryView.getBottomInventory(event); // The player's inventory
                 Grave.StorageMode storageMode = plugin.getGraveManager().getStorageMode(plugin.getConfig("storage.mode", grave)
                         .getString("storage.mode"));
 

@@ -35,6 +35,25 @@ public class CompatibilityInventoryView {
      * In API versions 1.20.6 and earlier, InventoryView is a class.
      * In versions 1.21 and later, it is an interface.
      * This method uses reflection to get the top Inventory object from the
+     * InventoryView associated with an InventoryEvent, to avoid runtime errors.
+     * @param event The generic InventoryEvent with an InventoryView to inspect.
+     * @return The bottom Inventory object from the event's InventoryView.
+     */
+    public static Inventory getBottomInventory(InventoryEvent event) {
+        try {
+            Object view = event.getView();
+            Method getBottomInventory = view.getClass().getMethod("getBottomInventory");
+            getBottomInventory.setAccessible(true);
+            return (Inventory) getBottomInventory.invoke(view);
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * In API versions 1.20.6 and earlier, InventoryView is a class.
+     * In versions 1.21 and later, it is an interface.
+     * This method uses reflection to get the top Inventory object from the
      * InventoryView, to avoid runtime errors.
      * @param inventoryView The InventoryView to inspect.
      * @return The top Inventory object from the event's InventoryView.
@@ -44,6 +63,24 @@ public class CompatibilityInventoryView {
             Method getTopInventory = ((Object) inventoryView).getClass().getMethod("getTopInventory");
             getTopInventory.setAccessible(true);
             return (Inventory) getTopInventory.invoke(inventoryView);
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * In API versions 1.20.6 and earlier, InventoryView is a class.
+     * In versions 1.21 and later, it is an interface.
+     * This method uses reflection to get the bottom Inventory object from the
+     * InventoryView, to avoid runtime errors.
+     * @param inventoryView The InventoryView to inspect.
+     * @return The bottom Inventory object from the event's InventoryView.
+     */
+    public static Inventory getBottomInventory(InventoryView inventoryView) {
+        try {
+            Method getBottomInventory = ((Object) inventoryView).getClass().getMethod("getBottomInventory");
+            getBottomInventory.setAccessible(true);
+            return (Inventory) getBottomInventory.invoke(inventoryView);
         } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
