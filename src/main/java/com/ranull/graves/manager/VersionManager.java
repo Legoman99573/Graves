@@ -1,5 +1,6 @@
 package com.ranull.graves.manager;
 
+import com.ranull.graves.compatibility.CompatibilitySoundEnum;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -596,9 +597,9 @@ public final class VersionManager {
         switch (sound) {
             case "BLOCK_BELL_USE":
                 try {
-                    toReturn = Sound.valueOf("BLOCK_BELL_USE");
+                    toReturn = CompatibilitySoundEnum.getSound("BLOCK_BELL_USE");
                 } catch (NullPointerException | IllegalArgumentException e) {
-                    toReturn = Sound.valueOf("ENTITY_ZOMBIE_AMBIENT");
+                    toReturn = CompatibilitySoundEnum.getSound("ENTITY_ZOMBIE_AMBIENT");
                 }
                 break;
                 // Add other cases for different sounds here

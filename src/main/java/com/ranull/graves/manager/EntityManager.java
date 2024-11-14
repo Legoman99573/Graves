@@ -1,6 +1,7 @@
 package com.ranull.graves.manager;
 
 import com.ranull.graves.Graves;
+import com.ranull.graves.compatibility.CompatibilitySoundEnum;
 import com.ranull.graves.data.EntityData;
 import com.ranull.graves.event.*;
 import com.ranull.graves.integration.MiniMessage;
@@ -487,7 +488,7 @@ public final class EntityManager extends EntityDataManager {
 
             if (string != null && !string.equals("")) {
                 try {
-                    location.getWorld().playSound(location, Sound.valueOf(string.toUpperCase()), volume, pitch);
+                    location.getWorld().playSound(location, Objects.requireNonNull(CompatibilitySoundEnum.getSound(string.toUpperCase())), volume, pitch);
                 } catch (IllegalArgumentException exception) {
                     plugin.debugMessage(string.toUpperCase() + " is not a Sound ENUM", 1);
                 }
@@ -559,7 +560,7 @@ public final class EntityManager extends EntityDataManager {
 
             if (string != null && !string.equals("")) {
                 try {
-                    player.playSound(location, Sound.valueOf(string.toUpperCase()), volume, pitch);
+                    player.playSound(location, Objects.requireNonNull(CompatibilitySoundEnum.getSound(string.toUpperCase())), volume, pitch);
                 } catch (IllegalArgumentException exception) {
                     plugin.debugMessage(string.toUpperCase() + " is not a Sound ENUM", 1);
                 }
