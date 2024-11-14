@@ -597,9 +597,9 @@ public final class VersionManager {
         switch (sound) {
             case "BLOCK_BELL_USE":
                 try {
-                    toReturn = CompatibilitySoundEnum.getSound("BLOCK_BELL_USE");
+                    toReturn = CompatibilitySoundEnum.valueOf("BLOCK_BELL_USE");
                 } catch (NullPointerException | IllegalArgumentException e) {
-                    toReturn = CompatibilitySoundEnum.getSound("ENTITY_ZOMBIE_AMBIENT");
+                    toReturn = CompatibilitySoundEnum.valueOf("ENTITY_ZOMBIE_AMBIENT");
                 }
                 break;
                 // Add other cases for different sounds here

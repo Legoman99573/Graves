@@ -488,7 +488,7 @@ public final class EntityManager extends EntityDataManager {
 
             if (string != null && !string.equals("")) {
                 try {
-                    location.getWorld().playSound(location, Objects.requireNonNull(CompatibilitySoundEnum.getSound(string.toUpperCase())), volume, pitch);
+                    location.getWorld().playSound(location, Objects.requireNonNull(CompatibilitySoundEnum.valueOf(string.toUpperCase())), volume, pitch);
                 } catch (IllegalArgumentException exception) {
                     plugin.debugMessage(string.toUpperCase() + " is not a Sound ENUM", 1);
                 }
@@ -560,7 +560,7 @@ public final class EntityManager extends EntityDataManager {
 
             if (string != null && !string.equals("")) {
                 try {
-                    player.playSound(location, Objects.requireNonNull(CompatibilitySoundEnum.getSound(string.toUpperCase())), volume, pitch);
+                    player.playSound(location, Objects.requireNonNull(CompatibilitySoundEnum.valueOf(string.toUpperCase())), volume, pitch);
                 } catch (IllegalArgumentException exception) {
                     plugin.debugMessage(string.toUpperCase() + " is not a Sound ENUM", 1);
                 }

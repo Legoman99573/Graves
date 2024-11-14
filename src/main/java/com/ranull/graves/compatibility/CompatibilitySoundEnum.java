@@ -23,7 +23,7 @@ public class CompatibilitySoundEnum {
      *                  (e.g., "BLOCK_ANVIL_LAND").
      * @return The corresponding {@link Sound} value, or {@code null} if the sound name is invalid or an error occurs.
      */
-    public static Sound getSound(String soundName) {
+    public static Sound valueOf(String soundName) {
         try {
             Method method = Sound.class.getMethod("valueOf", String.class);
             return (Sound) method.invoke(null, soundName);
