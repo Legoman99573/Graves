@@ -213,12 +213,16 @@ public final class StringUtil {
      * @return the formatted world name or the original if no match is found.
      */
     private static String getWorldFormatted(String worldName, Graves plugin) {
-        List<String> worlds = plugin.getConfig().getStringList("message.world");
+        List<String> worlds = plugin.getConfig("message.world", EntityType.PLAYER, null).getStringList("message.world");
 
         for (String worldEntry : worlds) {
             if (worldEntry.contains(worldName)) {
-                String[] worldFinal = worldEntry.split(":");
-                return worldFinal[1];
+                try {
+                    String[] worldFinal = worldEntry.split(": ");
+                    return worldFinal[1];
+                } catch (ArrayIndexOutOfBoundsException ignored) {
+
+                }
             }
         }
 
