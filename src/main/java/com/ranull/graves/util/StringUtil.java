@@ -216,12 +216,13 @@ public final class StringUtil {
         List<String> worlds = plugin.getConfig().getStringList("message.world");
 
         for (String worldEntry : worlds) {
-            if (worldEntry.startsWith(worldName + ":")) {
-                return worldEntry.split(":", 2)[1].trim();
+            if (worldEntry.contains(worldName)) {
+                String[] worldFinal = worldEntry.split(":");
+                return worldFinal[1];
             }
         }
 
-        // Fallback if no specific formatting is found
+        // Fallback to world name if no specific formatting is found
         return StringUtil.format(worldName);
     }
 
