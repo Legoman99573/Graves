@@ -159,7 +159,7 @@
       </plugin>
       <plugin>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>3.8.0</version>
+        <version>3.11.1</version>
         <executions>
           <execution>
             <id>attach-javadocs</id>
@@ -327,7 +327,7 @@
     <dependency>
       <groupId>de.oliver</groupId>
       <artifactId>FancyNpcs</artifactId>
-      <version>2.3.1</version>
+      <version>2.4.0</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -435,7 +435,7 @@
     <dependency>
       <groupId>com.palmergames.bukkit.towny</groupId>
       <artifactId>towny</artifactId>
-      <version>0.100.4.7</version>
+      <version>0.100.4.12</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -619,7 +619,7 @@
     <dependency>
       <groupId>de.tr7zw</groupId>
       <artifactId>item-nbt-api-plugin</artifactId>
-      <version>2.13.2</version>
+      <version>2.14.0</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
