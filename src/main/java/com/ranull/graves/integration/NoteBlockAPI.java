@@ -51,6 +51,7 @@ public class NoteBlockAPI {
         }
 
         SongPlayer songPlayer = new RadioSongPlayer(song);
+        songPlayer.setTick((short) (20 / song.getSpeed()));
         songPlayer.addPlayer(player);
         songPlayer.setPlaying(true);
         activeSongPlayers.put(player, songPlayer);
@@ -77,6 +78,7 @@ public class NoteBlockAPI {
         }
 
         SongPlayer songPlayer = new RadioSongPlayer(song);
+        songPlayer.setTick((short) (20 / song.getSpeed()));
         for (Player player : Bukkit.getOnlinePlayers()) {
             songPlayer.addPlayer(player);
         }
