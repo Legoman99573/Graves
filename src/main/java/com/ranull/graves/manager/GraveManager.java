@@ -1095,8 +1095,17 @@ public final class GraveManager {
                     GraveAutoLootEvent graveAutoLootEvent = new GraveAutoLootEvent(player, location, grave);
 
                     plugin.getServer().getPluginManager().callEvent(graveAutoLootEvent);
-                    if (!graveAutoLootEvent.isCancelled())
+                    if (!graveAutoLootEvent.isCancelled()) {
                         autoLootGrave(player, location, grave);
+                        if (plugin.getIntegrationManager().hasNoteBlockAPI()) {
+                            if (plugin.getIntegrationManager().getNoteBlockAPI().isSongPlayingForPlayer(player)) {
+                                plugin.getIntegrationManager().getNoteBlockAPI().stopSongForPlayer(player);
+                            }
+                            if (plugin.getIntegrationManager().getNoteBlockAPI().isSongPlayingForAllPlayers()) {
+                                plugin.getIntegrationManager().getNoteBlockAPI().stopSongForAllPlayers();
+                            }
+                        }
+                    }
                 } else if (plugin.hasGrantedPermission("graves.open", player.getPlayer())) {
                     if (plugin.getConfig("grave.preview", grave).getBoolean("grave.preview", false)) {
                         grave.setGravePreview(preview);

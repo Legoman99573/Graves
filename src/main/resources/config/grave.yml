@@ -588,6 +588,17 @@ settings:
         # Should we ignore air blocks? Most cases, this should be true, but with some schematics, you may need to set this to false.
         ignore-air: true
 
+      ################
+      # NoteBlockAPI #
+      ################
+      noteblockapi:
+        # Should NoteblockAPI be enabled?
+        enabled: false
+        # Should the noteblock sound play locally?
+        play-locally: true
+        # nbs sound to play. Must be placed in /plugins/GravesX/nbs/
+        nbs-sound: "examplesound"
+
       #########
       # Sound #
       #########

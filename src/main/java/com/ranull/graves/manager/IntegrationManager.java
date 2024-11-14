@@ -13,6 +13,7 @@ import org.bukkit.World;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 import java.util.StringJoiner;
@@ -229,7 +230,29 @@ public final class IntegrationManager {
      */
     private CoreProtectIntegration coreProtectIntegration;
 
+    /**
+     * Indicates whether Vault Economy are available.
+     * <p>
+     * This {@code boolean} flag indicates if Vault permissions are present and can be used within the plugin.
+     * </p>
+     */
     private boolean hasVaultEconomy;
+
+    /**
+     * Handles integration with NoteBlockAPI, a permissions management plugin.
+     * <p>
+     * This {@link NoteBlockAPI} instance represents the handler for integrating with the NoteBlockAPI plugin, which manages playing nbs files.
+     * </p>
+     */
+    private NoteBlockAPI noteBlockAPI;
+
+    /**
+     * Indicates whether NoteBlockAPI are available.
+     * <p>
+     * This {@code boolean} flag indicates if NoteBlockAPI are present and can be used within the plugin.
+     * </p>
+     */
+    private boolean hasNoteBlockAPI;
 
     /**
      * Initializes a new instance of the {@code IntegrationManager} class.
@@ -277,6 +300,7 @@ public final class IntegrationManager {
         loadNBTAPI();
         loadBedrockSupport();
         loadFancyNpcs();
+        loadNoteblockAPI();
     }
 
     /**
@@ -479,6 +503,15 @@ public final class IntegrationManager {
      */
     public PlayerNPC getPlayerNPC() {
         return playerNPC;
+    }
+
+    /**
+     * Returns the instance of the NoteBlockAPI integration, if it is loaded.
+     *
+     * @return The {@code NoteBlockAPI} integration instance, or null if not loaded.
+     */
+    public NoteBlockAPI getNoteBlockAPI() {
+        return noteBlockAPI;
     }
 
     /**
@@ -728,9 +761,24 @@ public final class IntegrationManager {
         return luckPermsHandler != null;
     }
 
+    /**
+     * Checks if FancyNpcs is loaded.
+     *
+     * @return {@code true} if FancyNpcs is loaded, {@code false} otherwise.
+     */
     public boolean hasFancyNpcs() {
         return fancyNpcs != null;
     }
+
+    /**
+     * Checks if NoteBlockAPI is loaded.
+     *
+     * @return {@code true} if NoteBlockAPI is loaded, {@code false} otherwise.
+     */
+    public boolean hasNoteBlockAPI() {
+        return hasNoteBlockAPI;
+    }
+
     /**
      * Loads the MultiPaper integration if enabled in the configuration.
      */
@@ -1293,7 +1341,35 @@ public final class IntegrationManager {
         Plugin nbtAPI = plugin.getServer().getPluginManager().getPlugin("NBTAPI");
 
         if (nbtAPI != null && nbtAPI.isEnabled()) {
+            noteBlockAPI = new NoteBlockAPI(plugin);
             plugin.integrationMessage("Hooked into " + nbtAPI.getName() + " " + nbtAPI.getDescription().getVersion() + ". Using " + nbtAPI.getName() + " "  + nbtAPI.getDescription().getVersion() +  " for handling Inventory NBT Data.");
+        }
+    }
+
+    private void loadNoteblockAPI() {
+        if (plugin.getConfig().getBoolean("settings.integration.noteblockapi.enabled", false)) {
+            Plugin nbAPI = plugin.getServer().getPluginManager().getPlugin("NoteBlockAPI");
+
+            if (nbAPI != null && nbAPI.isEnabled()) {
+                try {
+                    hasNoteBlockAPI = true;
+                    noteBlockAPI = new NoteBlockAPI(plugin);
+                    plugin.integrationMessage("Hooked into " + nbAPI.getName() + " " + nbAPI.getDescription().getVersion() + ".");
+                    // Create the nbs folder if it doesn't exist
+                    File nbsFolder = new File(plugin.getDataFolder(), "nbs");
+                    if (!nbsFolder.exists()) {
+                        if (!nbsFolder.mkdirs()) {
+                            plugin.getLogger().warning("Failed to create /plugins/GravesX/nbs directory. You will need to make this folder manually.");
+                        }
+                    }
+                } catch (Exception e) {
+                    hasNoteBlockAPI = false;
+                }
+            } else {
+                hasNoteBlockAPI = false;
+            }
+        } else {
+            hasNoteBlockAPI = false;
         }
     }
 

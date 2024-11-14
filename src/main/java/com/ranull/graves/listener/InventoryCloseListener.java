@@ -99,6 +99,14 @@ public class InventoryCloseListener implements Listener {
     private void callGraveLootedEvent(InventoryCloseEvent event, Grave grave, Player player, Entity entity) {
         GraveLootedEvent graveLootedEvent = new GraveLootedEvent(event.getView(), grave, player);
         plugin.getServer().getPluginManager().callEvent(graveLootedEvent);
+        if (plugin.getIntegrationManager().hasNoteBlockAPI()) {
+            if (plugin.getIntegrationManager().getNoteBlockAPI().isSongPlayingForPlayer(player)) {
+                plugin.getIntegrationManager().getNoteBlockAPI().stopSongForPlayer(player);
+            }
+            if (plugin.getIntegrationManager().getNoteBlockAPI().isSongPlayingForAllPlayers()) {
+                plugin.getIntegrationManager().getNoteBlockAPI().stopSongForAllPlayers();
+            }
+        }
     }
 
     /**
@@ -135,6 +143,14 @@ public class InventoryCloseListener implements Listener {
             // Award experience and remove the grave
             plugin.getGraveManager().giveGraveExperience(player, grave);
             plugin.getGraveManager().removeGrave(grave);
+            if (plugin.getIntegrationManager().hasNoteBlockAPI()) {
+                if (plugin.getIntegrationManager().getNoteBlockAPI().isSongPlayingForPlayer(player)) {
+                    plugin.getIntegrationManager().getNoteBlockAPI().stopSongForPlayer(player);
+                }
+                if (plugin.getIntegrationManager().getNoteBlockAPI().isSongPlayingForAllPlayers()) {
+                    plugin.getIntegrationManager().getNoteBlockAPI().stopSongForAllPlayers();
+                }
+            }
         }
     }
 }

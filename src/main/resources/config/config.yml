@@ -387,3 +387,11 @@ settings:
     coreprotect:
       # Should CoreProtect integration be enabled. Requires API version 9 or newer
       enabled: true
+
+    ################
+    # NoteBlockAPI #
+    ################
+    # Source: https://www.spigotmc.org/resources/noteblockapi.19287/
+    noteblockapi:
+      # Should NoteBlockAPI integration be enabled.
+      enabled: false

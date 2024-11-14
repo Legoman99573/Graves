@@ -42,6 +42,7 @@ softdepend:
   - LuckPerms
   - CoreProtect
   - NBTAPI
+  - NoteBlockAPI
 
 commands:
   graves:

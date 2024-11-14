@@ -735,7 +735,15 @@ public class EntityDeathListener implements Listener {
         plugin.getEntityManager().runCommands("event.command.create", livingEntity, grave.getLocationDeath(), grave);
         plugin.getDataManager().addGrave(grave);
         Player player = (Player) event.getEntity();
-        player.playSound(player.getLocation(), plugin.getVersionManager().getSoundFromVersion("BLOCK_BELL_USE"), 1.0f, 0.93f);
+        if (plugin.getConfig("noteblockapi.enabled", grave).getBoolean("noteblockapi.enabled") && plugin.getIntegrationManager().hasNoteBlockAPI()) {
+            if (plugin.getConfig("noteblockapi.play-locally", grave).getBoolean("noteblockapi.play-locally")) {
+                plugin.getIntegrationManager().getNoteBlockAPI().playSongForPlayer(player, plugin.getConfig("noteblockapi.nbs-sound", grave).getString("noteblockapi.nbs-sound"));
+            } else {
+                plugin.getIntegrationManager().getNoteBlockAPI().playSongForAllPlayers(plugin.getConfig("noteblockapi.nbs-sound", grave).getString("noteblockapi.nbs-sound"));
+            }
+        } else {
+            player.playSound(player.getLocation(), plugin.getVersionManager().getSoundFromVersion("BLOCK_BELL_USE"), 1.0f, 0.93f);
+        }
         if (plugin.getIntegrationManager().hasMultiPaper()) {
             plugin.getIntegrationManager().getMultiPaper().notifyGraveCreation(grave);
         }

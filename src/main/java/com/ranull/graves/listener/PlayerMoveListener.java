@@ -140,6 +140,14 @@ public class PlayerMoveListener implements Listener {
                 plugin.getServer().getPluginManager().callEvent(graveAutoLootEvent);
                 if (!graveAutoLootEvent.isCancelled() && !graveAutoLootEvent.isAddon()) {
                     plugin.getGraveManager().autoLootGrave(player, location, grave);
+                    if (plugin.getIntegrationManager().hasNoteBlockAPI()) {
+                        if (plugin.getIntegrationManager().getNoteBlockAPI().isSongPlayingForPlayer(player)) {
+                            plugin.getIntegrationManager().getNoteBlockAPI().stopSongForPlayer(player);
+                        }
+                        if (plugin.getIntegrationManager().getNoteBlockAPI().isSongPlayingForAllPlayers()) {
+                            plugin.getIntegrationManager().getNoteBlockAPI().stopSongForAllPlayers();
+                        }
+                    }
                 }
             }
         }

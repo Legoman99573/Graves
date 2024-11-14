@@ -855,6 +855,15 @@ public final class EntityManager extends EntityDataManager {
                 plugin.getServer().getPluginManager().callEvent(graveAutoLootEvent);
                 if (!graveAutoLootEvent.isCancelled()) {
                     plugin.getGraveManager().autoLootGrave(entity, entity.getLocation(), grave);
+                    if (plugin.getIntegrationManager().hasNoteBlockAPI()) {
+                        Player player = (Player) entity;
+                        if (plugin.getIntegrationManager().getNoteBlockAPI().isSongPlayingForPlayer(player)) {
+                            plugin.getIntegrationManager().getNoteBlockAPI().stopSongForPlayer(player);
+                        }
+                        if (plugin.getIntegrationManager().getNoteBlockAPI().isSongPlayingForAllPlayers()) {
+                            plugin.getIntegrationManager().getNoteBlockAPI().stopSongForAllPlayers();
+                        }
+                    }
                 }
                 return true;
             }

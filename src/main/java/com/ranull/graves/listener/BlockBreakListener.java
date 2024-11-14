@@ -120,6 +120,14 @@ public class BlockBreakListener implements Listener {
 
             if (graveBreakEvent.isDropItems() && plugin.getConfig("drop.auto-loot.break", grave).getBoolean("drop.auto-loot.break")) {
                 plugin.getGraveManager().breakGrave(block.getLocation(), grave);
+                if (plugin.getIntegrationManager().hasNoteBlockAPI()) {
+                    if (plugin.getIntegrationManager().getNoteBlockAPI().isSongPlayingForPlayer(player)) {
+                        plugin.getIntegrationManager().getNoteBlockAPI().stopSongForPlayer(player);
+                    }
+                    if (plugin.getIntegrationManager().getNoteBlockAPI().isSongPlayingForAllPlayers()) {
+                        plugin.getIntegrationManager().getNoteBlockAPI().stopSongForAllPlayers();
+                    }
+                }
             } else {
                 event.setCancelled(true);
             }

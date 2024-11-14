@@ -314,7 +314,15 @@ public class GravesXAPI {
                 if (victim instanceof Player) {
                     Player player = (Player) victim;
                     player.getPlayer();
-                    player.playSound(player.getLocation(), plugin.getVersionManager().getSoundFromVersion("BLOCK_BELL_USE"), 1.0f, 0.93f);
+                    if (plugin.getConfig("noteblockapi.enabled", grave).getBoolean("noteblockapi.enabled") && plugin.getIntegrationManager().hasNoteBlockAPI()) {
+                        if (plugin.getConfig("noteblockapi.play-locally", grave).getBoolean("noteblockapi.play-locally")) {
+                            plugin.getIntegrationManager().getNoteBlockAPI().playSongForPlayer(player, plugin.getConfig("noteblockapi.nbs-sound", grave).getString("noteblockapi.nbs-sound"));
+                        } else {
+                            plugin.getIntegrationManager().getNoteBlockAPI().playSongForAllPlayers(plugin.getConfig("noteblockapi.nbs-sound", grave).getString("noteblockapi.nbs-sound"));
+                        }
+                    } else {
+                        player.playSound(player.getLocation(), plugin.getVersionManager().getSoundFromVersion("BLOCK_BELL_USE"), 1.0f, 0.93f);
+                    }
                 }
 
                 if (integrationManager.hasMultiPaper()) {
