@@ -4,6 +4,7 @@ import com.ranull.graves.Graves;
 import com.ranull.graves.data.BlockData;
 import com.ranull.graves.data.ChunkData;
 import com.ranull.graves.event.GraveAutoLootEvent;
+import com.ranull.graves.event.GraveWalkOverEvent;
 import com.ranull.graves.integration.MiniMessage;
 import com.ranull.graves.type.Grave;
 import com.ranull.graves.util.LocationUtil;
@@ -135,10 +136,10 @@ public class PlayerMoveListener implements Listener {
             if (grave != null && plugin.getConfig("block.walk-over", grave).getBoolean("block.walk-over")
                     && plugin.getEntityManager().canOpenGrave(player, grave)) {
                 plugin.getGraveManager().cleanupCompasses(player, grave);
-                GraveAutoLootEvent graveAutoLootEvent = new GraveAutoLootEvent(player, location, grave);
+                GraveWalkOverEvent graveWalkOverEvent = new GraveWalkOverEvent(player, location, grave);
 
-                plugin.getServer().getPluginManager().callEvent(graveAutoLootEvent);
-                if (!graveAutoLootEvent.isCancelled() && !graveAutoLootEvent.isAddon()) {
+                plugin.getServer().getPluginManager().callEvent(graveWalkOverEvent);
+                if (!graveWalkOverEvent.isCancelled() && !graveWalkOverEvent.isAddon()) {
                     plugin.getGraveManager().autoLootGrave(player, location, grave);
                     if (plugin.getIntegrationManager().hasNoteBlockAPI()) {
                         if (plugin.getIntegrationManager().getNoteBlockAPI().isSongPlayingForPlayer(player)) {
