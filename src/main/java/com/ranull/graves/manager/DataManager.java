@@ -1220,20 +1220,23 @@ public final class DataManager {
                 }
 
                 while (resultSet.next()) {
-                    // Retrieve and convert data
-                    Location location = LocationUtil.stringToLocation(resultSet.getString("location"));
-                    UUID uuidGrave = UUID.fromString(resultSet.getString("uuid_grave"));
-                    String replaceMaterial = resultSet.getString("replace_material");
-                    String replaceData = resultSet.getString("replace_data");
+                    try {
+                        Location location = LocationUtil.stringToLocation(resultSet.getString("location"));
+                        UUID uuidGrave = UUID.fromString(resultSet.getString("uuid_grave"));
+                        String replaceMaterial = resultSet.getString("replace_material");
+                        String replaceData = resultSet.getString("replace_data");
 
-                    // Ensure required fields are valid
-                    if (replaceMaterial != null && replaceData != null) {
-                        getChunkData(location).addBlockData(new BlockData(location, uuidGrave, replaceMaterial, replaceData));
-                    } else {
-                        getChunkData(location).addBlockData(new BlockData(location, uuidGrave, "AIR", "minecraft:air"));
-                        plugin.getLogger().warning("Block Data for grave \"" + uuidGrave + "\" is missing or is invalid. Material/Block set to Air.");
+                        if (replaceMaterial != null && replaceData != null) {
+                            getChunkData(location).addBlockData(new BlockData(location, uuidGrave, replaceMaterial, replaceData));
+                        } else {
+                            getChunkData(location).addBlockData(new BlockData(location, uuidGrave, "AIR", "minecraft:air"));
+                            plugin.getLogger().warning("Block Data for grave \"" + uuidGrave + "\" at location \"" + location + "\" is missing or invalid. Material/Block set to Air.");
+                        }
+                        blockCount++;
+                    } catch (Exception e) {
+                        String uuidGraveStr = resultSet.getString("uuid_grave");
+                        plugin.getLogger().warning("Failed to process a block entry for Grave " + uuidGraveStr + ": " + e.getMessage());
                     }
-                    blockCount++;
                 }
 
                 if (blockCount == 0) {
