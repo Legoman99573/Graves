@@ -1,13 +1,19 @@
 grave:
-  displayname: "<white>Grave"
+  displayname: "<red>GravesX-Grave"
   material: PAPER
   Mechanics:
     furniture:
       enabled: true
+      barrier: true
+      barriers:
+        - origin
+      light: 1
       drop:
         silktouch: false
         loots:
-          - { oraxen_item: grave, probability: 1.0 }
+          - oraxen_item: grave
+            probability: 1.0
   Pack:
     generate_model: false
-    model: graves/grave
+    model: gravesx/grave
+    custom_model_data: 666
