@@ -179,6 +179,22 @@ public final class ServerUtil {
         if (plugin.getVersionManager().hasAPIVersion()) {
             stringList.add(plugin.getDescription().getName() + " API Version: " + plugin.getDescription().getAPIVersion());
         }
+
+        List<String> depends = getHardDependencies();
+        List<String> softDepends = getSoftDependencies();
+
+        if (depends != null) {
+            stringList.add(plugin.getDescription().getName() + " Hard Dependencies: " + String.join(", ", depends));
+        } else {
+            stringList.add(plugin.getDescription().getName() + " Hard Dependencies: None");
+        }
+
+        if (softDepends != null) {
+            stringList.add(plugin.getDescription().getName() + " Soft Dependencies: " + String.join(", ", softDepends));
+        } else {
+            stringList.add(plugin.getDescription().getName() + " Soft Dependencies: None");
+        }
+
         String databaseTypefromConfig = plugin.getConfig().getString("settings.storage.type", "SQLITE").toUpperCase();
         stringList.add(plugin.getDescription().getName() + " Database Type: " + databaseTypefromConfig);
         if (databaseTypefromConfig.equals("MYSQL") || databaseTypefromConfig.equals("MARIADB") || databaseTypefromConfig.equals("POSTGRESQL")) {
@@ -465,5 +481,25 @@ public final class ServerUtil {
             sb.append(plugin.getName()).append(" ").append(plugin.getDescription().getVersion()).append(", ");
         }
         return sb.length() > 0 ? sb.substring(0, sb.length() - 2) : "";
+    }
+
+    private static List<String> getHardDependencies() {
+        List<String> depends = new ArrayList<>();
+        for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
+            if (plugin.getDescription().getDepend().contains("GravesX")) {
+                depends.add(plugin.getName() + " v." + plugin.getDescription().getVersion());
+            }
+        }
+        return depends.isEmpty() ? null : depends;
+    }
+
+    private static List<String> getSoftDependencies() {
+        List<String> softDepends = new ArrayList<>();
+        for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
+            if (plugin.getDescription().getSoftDepend().contains("GravesX")) {
+                softDepends.add(plugin.getName() + " v." + plugin.getDescription().getVersion());
+            }
+        }
+        return softDepends.isEmpty() ? null : softDepends;
     }
 }
