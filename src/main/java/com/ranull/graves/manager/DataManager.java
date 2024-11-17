@@ -1796,7 +1796,8 @@ public final class DataManager {
             grave.setKillerType(resultSet.getString("killer_type") != null
                     ? EntityType.valueOf(resultSet.getString("killer_type")) : null);
             grave.setKillerName(resultSet.getString("killer_name").replace(" ", "_"));
-            grave.setKillerNameDisplay(resultSet.getString("killer_name_display").replace(" ", "_"));
+            grave.setKillerNameDisplay(resultSet.getString("killer_name_display") != null
+                    ? resultSet.getString("killer_name_display").replace(" ", "_") : null);
             grave.setKillerUUID(resultSet.getString("killer_uuid") != null
                     ? UUID.fromString(resultSet.getString("killer_uuid")) : null);
             grave.setLocationDeath(resultSet.getString("location_death") != null
