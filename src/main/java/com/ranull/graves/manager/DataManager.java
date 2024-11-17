@@ -1784,24 +1784,68 @@ public final class DataManager {
             }
 
             Grave grave = new Grave(UUID.fromString(uuidString));
+            List<String> invalidationReason = new ArrayList<>();
+            Location graveLocation = null;
 
-            grave.setOwnerType(resultSet.getString("owner_type") != null
-                    ? EntityType.valueOf(resultSet.getString("owner_type")) : null);
-            grave.setOwnerName(resultSet.getString("owner_name").replace(" ", "_"));
-            grave.setOwnerNameDisplay(resultSet.getString("owner_name_display"));
-            grave.setOwnerUUID(resultSet.getString("owner_uuid") != null
-                    ? UUID.fromString(resultSet.getString("owner_uuid")) : null);
-            grave.setOwnerTexture(resultSet.getString("owner_texture"));
-            grave.setOwnerTextureSignature(resultSet.getString("owner_texture_signature"));
-            grave.setKillerType(resultSet.getString("killer_type") != null
-                    ? EntityType.valueOf(resultSet.getString("killer_type")) : null);
-            grave.setKillerName(resultSet.getString("killer_name").replace(" ", "_"));
-            grave.setKillerNameDisplay(resultSet.getString("killer_name_display") != null
-                    ? resultSet.getString("killer_name_display").replace(" ", "_") : null);
-            grave.setKillerUUID(resultSet.getString("killer_uuid") != null
-                    ? UUID.fromString(resultSet.getString("killer_uuid")) : null);
-            grave.setLocationDeath(resultSet.getString("location_death") != null
-                    ? LocationUtil.stringToLocation(resultSet.getString("location_death")) : null);
+            // Validate fields and collect invalidation reasons
+            String ownerType = resultSet.getString("owner_type");
+            if (ownerType == null) invalidationReason.add("owner_type is null");
+            grave.setOwnerType(ownerType != null ? EntityType.valueOf(ownerType) : null);
+
+            String ownerName = resultSet.getString("owner_name");
+            if (ownerType != null && ownerName == null) {
+                plugin.getLogger().warning("Skipping grave at row " + resultSet.getRow() + " due to null Owner Name.");
+                return null;
+            }
+            grave.setOwnerName(ownerName != null ? ownerName.replace(" ", "_") : null);
+
+            String ownerNameDisplay = resultSet.getString("owner_name_display");
+            if (ownerNameDisplay == null) invalidationReason.add("owner_name_display is null");
+            grave.setOwnerNameDisplay(ownerNameDisplay);
+
+            String ownerUUID = resultSet.getString("owner_uuid");
+            if (ownerUUID == null) invalidationReason.add("owner_uuid is null");
+            grave.setOwnerUUID(ownerUUID != null ? UUID.fromString(ownerUUID) : null);
+
+            String ownerTexture = resultSet.getString("owner_texture");
+            if (ownerTexture == null) invalidationReason.add("owner_texture is null");
+            grave.setOwnerTexture(ownerTexture);
+
+            String ownerTextureSignature = resultSet.getString("owner_texture_signature");
+            if (ownerTextureSignature == null) invalidationReason.add("owner_texture_signature is null");
+            grave.setOwnerTextureSignature(ownerTextureSignature);
+
+            String killerType = resultSet.getString("killer_type");
+            if (killerType == null) invalidationReason.add("killer_type is null");
+            grave.setKillerType(killerType != null ? EntityType.valueOf(killerType) : null);
+
+            String killerName = resultSet.getString("killer_name");
+            if (killerName == null) invalidationReason.add("killer_name is null");
+            grave.setKillerName(killerName != null ? killerName.replace(" ", "_") : null);
+
+            String killerNameDisplay = resultSet.getString("killer_name_display");
+            if (killerNameDisplay == null) invalidationReason.add("killer_name_display is null");
+            grave.setKillerNameDisplay(killerNameDisplay != null ? killerNameDisplay.replace(" ", "_") : null);
+
+            String killerUUID = resultSet.getString("killer_uuid");
+            if ("PLAYER".equalsIgnoreCase(killerType) && killerUUID == null) {
+                invalidationReason.add("killer_uuid is null for killer_type PLAYER");
+            }
+            grave.setKillerUUID(killerUUID != null ? UUID.fromString(killerUUID) : null);
+
+            String locationDeath = resultSet.getString("location_death");
+            if (locationDeath == null) invalidationReason.add("location_death is null");
+            graveLocation = locationDeath != null ? LocationUtil.stringToLocation(locationDeath) : null;
+            grave.setLocationDeath(graveLocation);
+
+            if (resultSet.getString("equipment") == null) invalidationReason.add("equipment is null");
+            if (resultSet.getString("equipment") != null) {
+                @SuppressWarnings("unchecked")
+                Map<EquipmentSlot, ItemStack> equipmentMap = (Map<EquipmentSlot, ItemStack>) Base64Util
+                        .base64ToObject(resultSet.getString("equipment"));
+                grave.setEquipmentMap(equipmentMap != null ? equipmentMap : new HashMap<>());
+            }
+
             grave.setYaw(resultSet.getFloat("yaw"));
             grave.setPitch(resultSet.getFloat("pitch"));
             grave.setExperience(resultSet.getInt("experience"));
@@ -1817,11 +1861,8 @@ public final class DataManager {
                                     grave.getPermissionList())
                             .getString("gui.grave.title"), grave.getLocationDeath(), grave, plugin), plugin));
 
-            if (resultSet.getString("equipment") != null) {
-                @SuppressWarnings("unchecked")
-                Map<EquipmentSlot, ItemStack> equipmentMap = (Map<EquipmentSlot, ItemStack>) Base64Util
-                        .base64ToObject(resultSet.getString("equipment"));
-                grave.setEquipmentMap(equipmentMap != null ? equipmentMap : new HashMap<>());
+            if (!invalidationReason.isEmpty()) {
+                plugin.logInvalidGraveSite(uuidString, graveLocation, invalidationReason);
             }
 
             return grave;

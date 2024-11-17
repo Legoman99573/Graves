@@ -485,7 +485,7 @@ public final class ServerUtil {
 
     private static List<String> getHardDependencies() {
         List<String> depends = new ArrayList<>();
-        for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
+        for (Plugin plugin : Bukkit.getServer().getPluginManager().getPlugins()) {
             if (plugin.getDescription().getDepend().contains("GravesX")) {
                 depends.add(plugin.getName() + " v." + plugin.getDescription().getVersion());
             }
@@ -495,7 +495,7 @@ public final class ServerUtil {
 
     private static List<String> getSoftDependencies() {
         List<String> softDepends = new ArrayList<>();
-        for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
+        for (Plugin plugin : Bukkit.getServer().getPluginManager().getPlugins()) {
             if (plugin.getDescription().getSoftDepend().contains("GravesX")) {
                 softDepends.add(plugin.getName() + " v." + plugin.getDescription().getVersion());
             }

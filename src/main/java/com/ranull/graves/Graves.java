@@ -14,6 +14,7 @@ import org.bstats.charts.DrilldownPie;
 import org.bstats.charts.SimplePie;
 import org.bstats.charts.SingleLineChart;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
@@ -1011,6 +1012,30 @@ public class Graves extends JavaPlugin {
         for (StackTraceElement element : e.getStackTrace()) {
             getLogger().severe(element.toString());
         }
+    }
+
+    public void logInvalidGraveSite(String grave_uuid, Location affectedGraveLocation, List<String> invalidationReason) {
+        String graveWorld;
+        try {
+            graveWorld = affectedGraveLocation.getWorld().getName();
+        } catch (Exception e) {
+            graveWorld = "Unknown";
+        }
+        String graveX = String.valueOf(affectedGraveLocation.getBlockX());
+        String graveY = String.valueOf(affectedGraveLocation.getBlockY());
+        String graveZ = String.valueOf(affectedGraveLocation.getBlockZ());
+        getLogger().warning("Grave "
+                + grave_uuid
+                + " at location World: "
+                + graveWorld
+                + ", x: "
+                + graveX
+                + ", y: "
+                + graveY
+                + ", z: "
+                + graveZ
+                + " is invalid. If this was caused by an addon, then report it to the plugin author. Reason: "
+                + String.join(", ", invalidationReason));
     }
 
     /**
