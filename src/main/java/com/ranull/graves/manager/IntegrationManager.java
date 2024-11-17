@@ -247,14 +247,6 @@ public final class IntegrationManager {
     private NoteBlockAPI noteBlockAPI;
 
     /**
-     * Indicates whether NoteBlockAPI are available.
-     * <p>
-     * This {@code boolean} flag indicates if NoteBlockAPI are present and can be used within the plugin.
-     * </p>
-     */
-    private boolean hasNoteBlockAPI;
-
-    /**
      * Initializes a new instance of the {@code IntegrationManager} class.
      *
      * @param plugin The plugin instance of Graves.
@@ -776,7 +768,7 @@ public final class IntegrationManager {
      * @return {@code true} if NoteBlockAPI is loaded, {@code false} otherwise.
      */
     public boolean hasNoteBlockAPI() {
-        return hasNoteBlockAPI;
+        return noteBlockAPI != null;
     }
 
     /**
@@ -1352,7 +1344,6 @@ public final class IntegrationManager {
 
             if (nbAPI != null && nbAPI.isEnabled()) {
                 try {
-                    hasNoteBlockAPI = true;
                     noteBlockAPI = new NoteBlockAPI(plugin);
                     plugin.integrationMessage("Hooked into " + nbAPI.getName() + " " + nbAPI.getDescription().getVersion() + ".");
                     // Create the nbs folder if it doesn't exist
@@ -1363,13 +1354,14 @@ public final class IntegrationManager {
                         }
                     }
                 } catch (Exception e) {
-                    hasNoteBlockAPI = false;
+                    plugin.integrationMessage("Failed to Hook into " + nbAPI.getName() + " " + nbAPI.getDescription().getVersion() + ".", "warn");
+                    noteBlockAPI = null;
                 }
             } else {
-                hasNoteBlockAPI = false;
+                noteBlockAPI = null;
             }
         } else {
-            hasNoteBlockAPI = false;
+            noteBlockAPI = null;
         }
     }
 
