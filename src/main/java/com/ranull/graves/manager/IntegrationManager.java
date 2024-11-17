@@ -1333,13 +1333,12 @@ public final class IntegrationManager {
         Plugin nbtAPI = plugin.getServer().getPluginManager().getPlugin("NBTAPI");
 
         if (nbtAPI != null && nbtAPI.isEnabled()) {
-            noteBlockAPI = new NoteBlockAPI(plugin);
             plugin.integrationMessage("Hooked into " + nbtAPI.getName() + " " + nbtAPI.getDescription().getVersion() + ". Using " + nbtAPI.getName() + " "  + nbtAPI.getDescription().getVersion() +  " for handling Inventory NBT Data.");
         }
     }
 
     private void loadNoteblockAPI() {
-        if (plugin.getConfig().getBoolean("settings.integration.noteblockapi.enabled", false)) {
+        if (plugin.getConfig().getBoolean("settings.integration.noteblockapi.enabled", true)) {
             Plugin nbAPI = plugin.getServer().getPluginManager().getPlugin("NoteBlockAPI");
 
             if (nbAPI != null && nbAPI.isEnabled()) {
