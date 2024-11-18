@@ -191,115 +191,41 @@ public final class EntityManager extends EntityDataManager {
     }
 
     public void teleportEntity(Entity entity, Location location, Grave grave) {
-        if (canTeleport(entity, location)) {
-            location = LocationUtil.roundLocation(location);
-            BlockFace blockFace = BlockFaceUtil.getYawBlockFace(grave.getYaw());
-            Location locationTeleport = location.clone().getBlock().getRelative(blockFace).getRelative(blockFace)
-                    .getLocation().add(0.5, 0, 0.5);
+        location = LocationUtil.roundLocation(location);
+        BlockFace blockFace = BlockFaceUtil.getYawBlockFace(grave.getYaw());
+        Location locationTeleport = location.clone().getBlock().getRelative(blockFace).getRelative(blockFace)
+                .getLocation().add(0.5, 0, 0.5);
 
-            if (plugin.getLocationManager().isLocationSafePlayer(locationTeleport)) {
-                locationTeleport.setYaw(BlockFaceUtil.getBlockFaceYaw(blockFace.getOppositeFace()));
-                locationTeleport.setPitch(20);
-            } else {
-                locationTeleport = plugin.getLocationManager()
-                        .getSafeTeleportLocation(entity, location.add(0, 1, 0), grave, plugin);
+        if (plugin.getLocationManager().isLocationSafePlayer(locationTeleport)) {
+            locationTeleport.setYaw(BlockFaceUtil.getBlockFaceYaw(blockFace.getOppositeFace()));
+            locationTeleport.setPitch(20);
+        } else {
+            locationTeleport = plugin.getLocationManager()
+                    .getSafeTeleportLocation(entity, location.add(0, 1, 0), grave, plugin);
 
-                if (locationTeleport != null) {
-                    locationTeleport.add(0.5, 0, 0.5);
-                    locationTeleport.setYaw(BlockFaceUtil.getBlockFaceYaw(blockFace));
-                    locationTeleport.setPitch(90);
-                }
+            if (locationTeleport != null) {
+                locationTeleport.add(0.5, 0, 0.5);
+                locationTeleport.setYaw(BlockFaceUtil.getBlockFaceYaw(blockFace));
+                locationTeleport.setPitch(90);
             }
+        }
 
-            final long delayTicks = plugin.getConfig("teleport.delay", grave).getLong("teleport.delay");
+        final long delayTicks = plugin.getConfig("teleport.delay", grave).getLong("teleport.delay");
 
-            if (locationTeleport != null && locationTeleport.getWorld() != null) {
-                if (entity instanceof Player) {
-                    Player player = (Player) entity;
-                    final Location initialLocation = player.getLocation();
+        if (locationTeleport != null && locationTeleport.getWorld() != null) {
+            if (entity instanceof Player) {
+                Player player = (Player) entity;
+                final Location initialLocation = player.getLocation();
 
-                    if (plugin.getIntegrationManager().hasVault() && plugin.getIntegrationManager().hasVaultEconomy()) {
-                        double teleportCost = getTeleportCost(entity.getLocation(), locationTeleport, grave);
-                        if (plugin.getIntegrationManager().getVault().hasBalance(player, teleportCost)) {
-                            GraveTeleportEvent graveTeleportEvent = new GraveTeleportEvent(grave, entity);
-
-                            plugin.getServer().getPluginManager().callEvent(graveTeleportEvent);
-                            if (!graveTeleportEvent.isCancelled() && !graveTeleportEvent.isAddon()) {
-                                if (!plugin.hasGrantedPermission("graves.teleport.delay-bypass", player.getPlayer()) && delayTicks > 0) {
-                                    Location finalLocationTeleport1 = locationTeleport;
-                                    BossBar bossBar;
-                                    if (plugin.getIntegrationManager().hasMiniMessage()) {
-                                        String legacyBossBar = StringUtil.parseString(plugin.getConfig("message.teleport-waiting", grave)
-                                                .getString("message.teleport-waiting"), location, grave, plugin);
-                                        bossBar = plugin.getServer().createBossBar(MiniMessage.parseString(legacyBossBar), BarColor.RED, BarStyle.SOLID);
-                                    } else {
-                                        bossBar = plugin.getServer().createBossBar(StringUtil.parseString(plugin.getConfig("message.teleport-waiting", grave)
-                                                .getString("message.teleport-waiting"), location, grave, plugin), BarColor.RED, BarStyle.SOLID);
-                                    }
-                                    bossBar.addPlayer(player);
-
-                                    new BukkitRunnable() {
-                                        int ticksRemaining = (int) delayTicks;
-
-                                        @Override
-                                        public void run() {
-                                            Location currentLocation = player.getLocation();
-
-                                            // Check if player has moved (excluding yaw/pitch unless teleport.strict is true)
-                                            boolean hasMoved = plugin.getConfig().getBoolean("teleport.strict")
-                                                    ? !currentLocation.equals(initialLocation)  // Compare full location if strict
-                                                    : !currentLocation.getBlock().equals(initialLocation.getBlock());  // Compare block location only
-
-                                            if (!player.isOnline() || hasMoved) {
-                                                bossBar.removeAll();
-                                                plugin.getEntityManager().sendMessage("message.teleport-cancelled", player, player.getLocation(), grave);
-                                                this.cancel();
-                                                return;
-                                            }
-
-                                            if (ticksRemaining > 0) {
-                                                double progress = (double) ticksRemaining / delayTicks;
-                                                bossBar.setProgress(Math.max(0, Math.min(1, progress)));  // Clamp the progress between 0 and 1
-                                                ticksRemaining--;
-                                            } else {
-                                                if (plugin.getIntegrationManager().getVault().hasBalance(player, teleportCost)
-                                                        && plugin.getIntegrationManager().getVault().withdrawBalance(player, teleportCost)) {
-                                                    player.teleport(finalLocationTeleport1);
-                                                    plugin.getEntityManager().sendMessage("message.teleport", player, finalLocationTeleport1, grave);
-                                                    plugin.getEntityManager().playPlayerSound("sound.teleport", player, finalLocationTeleport1, grave);
-                                                } else {
-                                                    plugin.getEntityManager().sendMessage("message.no-money", player, player.getLocation(), grave);
-                                                }
-                                                bossBar.removeAll();
-                                                this.cancel();
-                                            }
-                                        }
-                                    }.runTaskTimer(plugin, 0, 20L);  // Runs every second (20 ticks)
-                                } else {
-                                    // Immediate teleportation, no delay
-                                    if (player.isOnline() && player.getLocation().equals(initialLocation)) {
-                                        if (plugin.getIntegrationManager().getVault().hasBalance(player, teleportCost)
-                                                && plugin.getIntegrationManager().getVault().withdrawBalance(player, teleportCost)) {
-                                            player.teleport(locationTeleport);
-                                            plugin.getEntityManager().sendMessage("message.teleport", player, locationTeleport, grave);
-                                            plugin.getEntityManager().playPlayerSound("sound.teleport", player, locationTeleport, grave);
-                                        } else {
-                                            plugin.getEntityManager().sendMessage("message.no-money", player, player.getLocation(), grave);
-                                        }
-                                    } else {
-                                        plugin.getEntityManager().sendMessage("message.teleport-cancelled", player, player.getLocation(), grave);
-                                    }
-                                }
-                            }
-                        } else {
-                            plugin.getEntityManager().sendMessage("message.no-money", player, player.getLocation(), grave);
-                        }
-                    } else {
+                if (plugin.getIntegrationManager().hasVault() && plugin.getIntegrationManager().hasVaultEconomy()) {
+                    double teleportCost = getTeleportCost(entity.getLocation(), locationTeleport, grave);
+                    if (plugin.getIntegrationManager().getVault().hasBalance(player, teleportCost)) {
                         GraveTeleportEvent graveTeleportEvent = new GraveTeleportEvent(grave, entity);
+
                         plugin.getServer().getPluginManager().callEvent(graveTeleportEvent);
                         if (!graveTeleportEvent.isCancelled() && !graveTeleportEvent.isAddon()) {
                             if (!plugin.hasGrantedPermission("graves.teleport.delay-bypass", player.getPlayer()) && delayTicks > 0) {
-                                Location finalLocationTeleport = locationTeleport;
+                                Location finalLocationTeleport1 = locationTeleport;
                                 BossBar bossBar;
                                 if (plugin.getIntegrationManager().hasMiniMessage()) {
                                     String legacyBossBar = StringUtil.parseString(plugin.getConfig("message.teleport-waiting", grave)
@@ -335,53 +261,123 @@ public final class EntityManager extends EntityDataManager {
                                             bossBar.setProgress(Math.max(0, Math.min(1, progress)));  // Clamp the progress between 0 and 1
                                             ticksRemaining--;
                                         } else {
-                                            player.teleport(finalLocationTeleport);
-                                            plugin.getEntityManager().sendMessage("message.teleport", player, finalLocationTeleport, grave);
-                                            plugin.getEntityManager().playPlayerSound("sound.teleport", player, finalLocationTeleport, grave);
+                                            if (plugin.getIntegrationManager().getVault().hasBalance(player, teleportCost)
+                                                    && plugin.getIntegrationManager().getVault().withdrawBalance(player, teleportCost)) {
+                                                player.teleport(finalLocationTeleport1);
+                                                plugin.getEntityManager().sendMessage("message.teleport", player, finalLocationTeleport1, grave);
+                                                plugin.getEntityManager().playPlayerSound("sound.teleport", player, finalLocationTeleport1, grave);
+                                            } else {
+                                                plugin.getEntityManager().sendMessage("message.no-money", player, player.getLocation(), grave);
+                                            }
                                             bossBar.removeAll();
                                             this.cancel();
                                         }
                                     }
                                 }.runTaskTimer(plugin, 0, 20L);  // Runs every second (20 ticks)
                             } else {
+                                // Immediate teleportation, no delay
                                 if (player.isOnline() && player.getLocation().equals(initialLocation)) {
-                                    player.teleport(locationTeleport);
-                                    plugin.getEntityManager().sendMessage("message.teleport", player, locationTeleport, grave);
+                                    if (plugin.getIntegrationManager().getVault().hasBalance(player, teleportCost)
+                                            && plugin.getIntegrationManager().getVault().withdrawBalance(player, teleportCost)) {
+                                        player.teleport(locationTeleport);
+                                        plugin.getEntityManager().sendMessage("message.teleport", player, locationTeleport, grave);
+                                        plugin.getEntityManager().playPlayerSound("sound.teleport", player, locationTeleport, grave);
+                                    } else {
+                                        plugin.getEntityManager().sendMessage("message.no-money", player, player.getLocation(), grave);
+                                    }
                                 } else {
                                     plugin.getEntityManager().sendMessage("message.teleport-cancelled", player, player.getLocation(), grave);
                                 }
                             }
                         }
+                    } else {
+                        plugin.getEntityManager().sendMessage("message.no-money", player, player.getLocation(), grave);
                     }
                 } else {
                     GraveTeleportEvent graveTeleportEvent = new GraveTeleportEvent(grave, entity);
-
                     plugin.getServer().getPluginManager().callEvent(graveTeleportEvent);
                     if (!graveTeleportEvent.isCancelled() && !graveTeleportEvent.isAddon()) {
-                        if (delayTicks > 0) {
-                            Location finalLocationTeleport2 = locationTeleport;
+                        if (!plugin.hasGrantedPermission("graves.teleport.delay-bypass", player.getPlayer()) && delayTicks > 0) {
+                            Location finalLocationTeleport = locationTeleport;
+                            BossBar bossBar;
+                            if (plugin.getIntegrationManager().hasMiniMessage()) {
+                                String legacyBossBar = StringUtil.parseString(plugin.getConfig("message.teleport-waiting", grave)
+                                        .getString("message.teleport-waiting"), location, grave, plugin);
+                                bossBar = plugin.getServer().createBossBar(MiniMessage.parseString(legacyBossBar), BarColor.RED, BarStyle.SOLID);
+                            } else {
+                                bossBar = plugin.getServer().createBossBar(StringUtil.parseString(plugin.getConfig("message.teleport-waiting", grave)
+                                        .getString("message.teleport-waiting"), location, grave, plugin), BarColor.RED, BarStyle.SOLID);
+                            }
+                            bossBar.addPlayer(player);
+
                             new BukkitRunnable() {
+                                int ticksRemaining = (int) delayTicks;
+
                                 @Override
                                 public void run() {
-                                    if (entity.isValid()) {
-                                        entity.teleport(finalLocationTeleport2);
-                                        plugin.getEntityManager().sendMessage("message.teleport", entity, entity.getLocation(), grave);
+                                    Location currentLocation = player.getLocation();
+
+                                    // Check if player has moved (excluding yaw/pitch unless teleport.strict is true)
+                                    boolean hasMoved = plugin.getConfig().getBoolean("teleport.strict")
+                                            ? !currentLocation.equals(initialLocation)  // Compare full location if strict
+                                            : !currentLocation.getBlock().equals(initialLocation.getBlock());  // Compare block location only
+
+                                    if (!player.isOnline() || hasMoved) {
+                                        bossBar.removeAll();
+                                        plugin.getEntityManager().sendMessage("message.teleport-cancelled", player, player.getLocation(), grave);
+                                        this.cancel();
+                                        return;
+                                    }
+
+                                    if (ticksRemaining > 0) {
+                                        double progress = (double) ticksRemaining / delayTicks;
+                                        bossBar.setProgress(Math.max(0, Math.min(1, progress)));  // Clamp the progress between 0 and 1
+                                        ticksRemaining--;
+                                    } else {
+                                        player.teleport(finalLocationTeleport);
+                                        plugin.getEntityManager().sendMessage("message.teleport", player, finalLocationTeleport, grave);
+                                        plugin.getEntityManager().playPlayerSound("sound.teleport", player, finalLocationTeleport, grave);
+                                        bossBar.removeAll();
+                                        this.cancel();
                                     }
                                 }
-                            }.runTaskLater(plugin, delayTicks * 20L);
+                            }.runTaskTimer(plugin, 0, 20L);  // Runs every second (20 ticks)
                         } else {
-                            if (entity.isValid()) {
-                                entity.teleport(locationTeleport);
-                                plugin.getEntityManager().sendMessage("message.teleport", entity, entity.getLocation(), grave);
+                            if (player.isOnline() && player.getLocation().equals(initialLocation)) {
+                                player.teleport(locationTeleport);
+                                plugin.getEntityManager().sendMessage("message.teleport", player, locationTeleport, grave);
+                            } else {
+                                plugin.getEntityManager().sendMessage("message.teleport-cancelled", player, player.getLocation(), grave);
                             }
                         }
                     }
                 }
             } else {
-                plugin.getEntityManager().sendMessage("message.teleport-failure", entity, location, grave);
+                GraveTeleportEvent graveTeleportEvent = new GraveTeleportEvent(grave, entity);
+
+                plugin.getServer().getPluginManager().callEvent(graveTeleportEvent);
+                if (!graveTeleportEvent.isCancelled() && !graveTeleportEvent.isAddon()) {
+                    if (delayTicks > 0) {
+                        Location finalLocationTeleport2 = locationTeleport;
+                        new BukkitRunnable() {
+                            @Override
+                            public void run() {
+                                if (entity.isValid()) {
+                                    entity.teleport(finalLocationTeleport2);
+                                    plugin.getEntityManager().sendMessage("message.teleport", entity, entity.getLocation(), grave);
+                                }
+                            }
+                        }.runTaskLater(plugin, delayTicks * 20L);
+                    } else {
+                        if (entity.isValid()) {
+                            entity.teleport(locationTeleport);
+                            plugin.getEntityManager().sendMessage("message.teleport", entity, entity.getLocation(), grave);
+                        }
+                    }
+                }
             }
         } else {
-            plugin.getEntityManager().sendMessage("message.region-teleport-deny", entity, location, grave);
+            plugin.getEntityManager().sendMessage("message.teleport-failure", entity, location, grave);
         }
     }
 
@@ -422,20 +418,6 @@ public final class EntityManager extends EntityDataManager {
             cost += costDifferentWorld;
         }
         return cost;
-    }
-
-    /**
-     * Checks if an entity can teleport to a specified location.
-     *
-     * @param entity   the entity to check.
-     * @param location the location to check.
-     * @return true if the entity can teleport, false otherwise.
-     */
-    public boolean canTeleport(Entity entity, Location location) {
-        return (!plugin.getIntegrationManager().hasWorldGuard()
-                || plugin.getIntegrationManager().getWorldGuard().canTeleport(entity, location))
-                && (!plugin.getIntegrationManager().hasGriefDefender()
-                || plugin.getIntegrationManager().getGriefDefender().canTeleport(entity, location));
     }
 
     /**

@@ -256,10 +256,6 @@
       <url>https://oss.sonatype.org/content/groups/public/</url>
     </repository>
     <repository>
-      <id>griefdefender-repo</id>
-      <url>https://repo.glaremasters.me/repository/bloodshot/</url>
-    </repository>
-    <repository>
       <id>jeff-media-repo</id>
       <url>https://hub.jeff-media.com/nexus/repository/jeff-media-public/</url>
     </repository>
@@ -427,18 +423,6 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>com.sk89q.worldguard</groupId>
-      <artifactId>worldguard-bukkit</artifactId>
-      <version>7.0.12</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.palmergames.bukkit.towny</groupId>
-      <artifactId>towny</artifactId>
-      <version>0.100.4.12</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
       <groupId>de.jeff_media</groupId>
       <artifactId>ChestSort</artifactId>
       <version>14.1.0</version>
@@ -448,12 +432,6 @@
       <groupId>com.github.placeholderapi</groupId>
       <artifactId>placeholderapi</artifactId>
       <version>master-87ea46a4dd-1</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.griefdefender</groupId>
-      <artifactId>api</artifactId>
-      <version>2.0.0-20210822.184639-9</version>
       <scope>provided</scope>
     </dependency>
     <dependency>

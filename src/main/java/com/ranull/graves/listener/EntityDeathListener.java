@@ -83,8 +83,6 @@ public class EntityDeathListener implements Listener {
             return;
         }
 
-        if (!canCreateGraveInProtectedRegion(location, livingEntity, entityName, permissionList)) return;
-
         if (!isValidDamageCause(livingEntity, permissionList, entityName)) return;
 
         Player player = ((PlayerDeathEvent) event).getEntity().getPlayer();
@@ -332,52 +330,6 @@ public class EntityDeathListener implements Listener {
         if (!worldList.contains("ALL") && !worldList.contains(livingEntity.getWorld().getName())) {
             plugin.debugMessage("Grave not created for " + entityName + " because they are not in a valid world", 2);
             return false;
-        }
-        return true;
-    }
-
-    /**
-     * Checks if a grave can be created in the specified WorldGuard region.
-     *
-     * @param location       The location to check.
-     * @param livingEntity   The entity to check.
-     * @param entityName     The name of the entity.
-     * @param permissionList The list of permissions.
-     * @return True if a grave can be created, false otherwise.
-     */
-    private boolean canCreateGraveInProtectedRegion(Location location, LivingEntity livingEntity, String entityName, List<String> permissionList) {
-        if (plugin.getIntegrationManager().hasWorldGuard()) {
-            boolean hasCreateGrave = plugin.getIntegrationManager().getWorldGuard().hasCreateGrave(location);
-            if (hasCreateGrave) {
-                if (livingEntity instanceof Player) {
-                    Player player = (Player) livingEntity;
-                    if (!plugin.getIntegrationManager().getWorldGuard().canCreateGrave(player, location)) {
-                        plugin.getEntityManager().sendMessage("message.region-create-deny", player, location, permissionList);
-                        plugin.debugMessage("Grave not created for " + entityName + " because they are in a region with graves-create set to deny", 2);
-                        return false;
-                    }
-                } else if (!plugin.getIntegrationManager().getWorldGuard().canCreateGrave(location)) {
-                    plugin.debugMessage("Grave not created for " + entityName + " because they are in a region with graves-create set to deny", 2);
-                    return false;
-                }
-            } else if (!plugin.getLocationManager().canBuild(livingEntity, location, permissionList)) {
-                plugin.getEntityManager().sendMessage("message.build-denied", livingEntity, location, permissionList);
-                plugin.debugMessage("Grave not created for " + entityName + " because they don't have permission to build where they died", 2);
-                return false;
-            }
-        } else if (!plugin.getLocationManager().canBuild(livingEntity, location, permissionList)) {
-            plugin.getEntityManager().sendMessage("message.build-denied", livingEntity, location, permissionList);
-            plugin.debugMessage("Grave not created for " + entityName + " because they don't have permission to build where they died", 2);
-            return false;
-        }
-
-        if (plugin.getIntegrationManager().hasTowny()) {
-            Player player = (livingEntity instanceof Player) ? (Player) livingEntity : null;
-            if (player != null && !plugin.getIntegrationManager().getTowny().isResident(String.valueOf(location), player)) {
-                plugin.getEntityManager().sendMessage("message.region-create-deny", player, location, permissionList);
-                plugin.debugMessage("Grave not created for " + entityName + " because they are not a resident in the town", 2);
-                return false;
-            }
         }
         return true;
     }

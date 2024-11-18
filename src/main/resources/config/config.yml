@@ -232,30 +232,6 @@ settings:
       # Should Graves write its schematics into its own folder.
       write: true
 
-    ##############
-    # WorldGuard #
-    ##############
-    # Source: https://dev.bukkit.org/projects/worldguard/
-    worldguard:
-      # Should WorldGuard integration be enabled.
-      enabled: true
-
-    #########
-    # Towny #
-    #########
-    # Source: https://www.spigotmc.org/resources/towny-advanced.72694/
-    towny:
-      # Should Towny integration be enabled.
-      enabled: false
-
-    #################
-    # GriefDefender #
-    #################
-    # Source: https://www.spigotmc.org/resources/griefdefender.68900/
-    griefdefender:
-      # Should GriefDefender integration be enabled.
-      enabled: false
-
     ################
     # FurnitureLib #
     ################

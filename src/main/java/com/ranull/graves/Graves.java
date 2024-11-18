@@ -79,8 +79,6 @@ public class Graves extends JavaPlugin {
         saveDefaultConfig();
 
         integrationManager = new IntegrationManager(this);
-
-        integrationManager.loadWorldGuard();
     }
 
     @Override

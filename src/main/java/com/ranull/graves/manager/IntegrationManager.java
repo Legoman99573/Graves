@@ -65,30 +65,6 @@ public final class IntegrationManager {
     private WorldEdit worldEdit;
 
     /**
-     * Integration with WorldGuard, a plugin for managing regions and protection.
-     * <p>
-     * This {@link WorldGuard} instance represents the integration with the WorldGuard plugin, used for managing region protection.
-     * </p>
-     */
-    private WorldGuard worldGuard;
-
-    /**
-     * Integration with Towny, a plugin for managing towns and nations.
-     * <p>
-     * This {@link Towny} instance represents the integration with the Towny plugin, used for managing town and nation systems.
-     * </p>
-     */
-    private Towny towny;
-
-    /**
-     * Integration with GriefDefender, a plugin for land protection and grief prevention.
-     * <p>
-     * This {@link GriefDefender} instance represents the integration with the GriefDefender plugin, used for land protection and grief prevention.
-     * </p>
-     */
-    private GriefDefender griefDefender;
-
-    /**
      * Integration with FurnitureLib, a plugin for furniture management.
      * <p>
      * This {@link FurnitureLib} instance represents the integration with the FurnitureLib plugin, used for managing furniture.
@@ -271,9 +247,6 @@ public final class IntegrationManager {
         loadVault();
         loadProtocolLib();
         loadWorldEdit();
-        loadWorldGuard();
-        loadTowny();
-        loadGriefDefender(); // TODO: Integration enabled, test for possible issues.
         loadFurnitureLib();
         loadFurnitureEngine();
         loadProtectionLib();
@@ -338,10 +311,6 @@ public final class IntegrationManager {
         if (citizensNPC != null) {
             citizensNPC.unregisterListeners();
         }
-
-        if (towny != null) {
-            towny.unregisterListeners();
-        }
     }
 
     /**
@@ -378,33 +347,6 @@ public final class IntegrationManager {
      */
     public WorldEdit getWorldEdit() {
         return worldEdit;
-    }
-
-    /**
-     * Returns the instance of the WorldGuard integration, if it is loaded.
-     *
-     * @return The {@code WorldGuard} integration instance, or null if not loaded.
-     */
-    public WorldGuard getWorldGuard() {
-        return worldGuard;
-    }
-
-    /**
-     * Returns the instance of the Towny integration, if it is loaded.
-     *
-     * @return The {@code Towny} integration instance, or null if not loaded.
-     */
-    public Towny getTowny() {
-        return towny;
-    }
-
-    /**
-     * Returns the instance of the GriefDefender integration, if it is loaded.
-     *
-     * @return The {@code GriefDefender} integration instance, or null if not loaded.
-     */
-    public GriefDefender getGriefDefender() {
-        return griefDefender;
     }
 
     /**
@@ -603,33 +545,6 @@ public final class IntegrationManager {
      */
     public boolean hasWorldEdit() {
         return worldEdit != null;
-    }
-
-    /**
-     * Checks if WorldGuard integration is loaded.
-     *
-     * @return {@code true} if WorldGuard integration is loaded, {@code false} otherwise.
-     */
-    public boolean hasWorldGuard() {
-        return worldGuard != null;
-    }
-
-    /**
-     * Checks if Towny integration is loaded.
-     *
-     * @return {@code true} if Towny integration is loaded, {@code false} otherwise.
-     */
-    public boolean hasTowny() {
-        return towny != null;
-    }
-
-    /**
-     * Checks if GriefDefender integration is loaded.
-     *
-     * @return {@code true} if GriefDefender integration is loaded, {@code false} otherwise.
-     */
-    public boolean hasGriefDefender() {
-        return griefDefender != null;
     }
 
     /**
@@ -916,47 +831,6 @@ public final class IntegrationManager {
     }
 
     /**
-     * Loads the WorldGuard integration if enabled in the configuration.
-     */
-    public void loadWorldGuard() {
-        if (plugin.getConfig().getBoolean("settings.integration.worldguard.enabled", true)) {
-            Plugin worldGuardPlugin = plugin.getServer().getPluginManager().getPlugin("WorldGuard");
-
-            if (worldGuardPlugin != null) {
-                try {
-                    Class.forName("com.sk89q.worldguard.WorldGuard", false, getClass().getClassLoader());
-                    Class.forName("com.sk89q.worldguard.protection.flags.registry.FlagConflictException", false, getClass().getClassLoader());
-
-                    worldGuard = new WorldGuard(plugin);
-
-                    plugin.integrationMessage("Hooked into " + worldGuardPlugin.getName() + " " + worldGuardPlugin.getDescription().getVersion() + ".");
-                } catch (ClassNotFoundException ignored) {
-                    plugin.integrationMessage(worldGuardPlugin.getName() + " " + worldGuardPlugin.getDescription().getVersion() + " detected, Only WorldGuard 6.2+ is supported. Disabling WorldGuard support.");
-                }
-            }
-        } else {
-            worldGuard = null;
-        }
-    }
-
-    /**
-     * Loads the Towny integration if enabled in the configuration.
-     */
-    public void loadTowny() {
-        if (plugin.getConfig().getBoolean("settings.integration.towny.enabled", true)) {
-            Plugin townyPlugin = plugin.getServer().getPluginManager().getPlugin("Towny");
-
-            if (townyPlugin != null) {
-                towny = new Towny(plugin, townyPlugin);
-
-                plugin.integrationMessage("Hooked into " + townyPlugin.getName() + " " + townyPlugin.getDescription().getVersion() + ".");
-            }
-        } else {
-            towny = null;
-        }
-    }
-
-    /**
      * Loads the WorldEdit integration if enabled in the configuration.
      */
     private void loadWorldEdit() {
@@ -999,23 +873,6 @@ public final class IntegrationManager {
             }
         } else {
             coreProtectIntegration = null;
-        }
-    }
-
-    /**
-     * Loads the GriefDefender integration if enabled in the configuration.
-     */
-    private void loadGriefDefender() {
-        if (plugin.getConfig().getBoolean("settings.integration.griefdefender.enabled", true)) {
-            Plugin griefDefenderPlugin = plugin.getServer().getPluginManager().getPlugin("GriefDefender");
-
-            if (griefDefenderPlugin != null && griefDefenderPlugin.isEnabled()) {
-                griefDefender = new GriefDefender();
-
-                plugin.integrationMessage("Hooked into " + griefDefenderPlugin.getName() + " " + griefDefenderPlugin.getDescription().getVersion() + ".");
-            }
-        } else {
-            griefDefender = null;
         }
     }
 
