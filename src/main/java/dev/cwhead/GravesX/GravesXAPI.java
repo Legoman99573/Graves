@@ -314,11 +314,33 @@ public class GravesXAPI {
                 if (victim instanceof Player) {
                     Player player = (Player) victim;
                     player.getPlayer();
-                    if (plugin.getConfig("noteblockapi.enabled", grave).getBoolean("noteblockapi.enabled") && plugin.getIntegrationManager().hasNoteBlockAPI()) {
+                    if (plugin.getConfig("noteblockapi.enabled", grave).getBoolean("noteblockapi.enabled")
+                            && plugin.getIntegrationManager().hasNoteBlockAPI()) {
+
+                        String deathReason = victim.getLastDamageCause() != null
+                                ? victim.getLastDamageCause().getCause().name()
+                                : "UNKNOWN";
+                        String nbsSound = null;
+
+                        List<String> deathCauses = plugin.getConfig("noteblockapi.death-causes", grave)
+                                .getStringList("noteblockapi.death-causes");
+                        for (String cause : deathCauses) {
+                            String[] parts = cause.split(": ");
+                            if (parts.length == 2 && parts[0].equalsIgnoreCase(deathReason)) {
+                                nbsSound = parts[1].trim();
+                                break;
+                            }
+                        }
+
+                        if (nbsSound == null) {
+                            nbsSound = plugin.getConfig("noteblockapi.nbs-sound", grave)
+                                    .getString("noteblockapi.nbs-sound");
+                        }
+
                         if (plugin.getConfig("noteblockapi.play-locally", grave).getBoolean("noteblockapi.play-locally")) {
-                            plugin.getIntegrationManager().getNoteBlockAPI().playSongForPlayer(player, plugin.getConfig("noteblockapi.nbs-sound", grave).getString("noteblockapi.nbs-sound"));
+                            plugin.getIntegrationManager().getNoteBlockAPI().playSongForPlayer(player, nbsSound);
                         } else {
-                            plugin.getIntegrationManager().getNoteBlockAPI().playSongForAllPlayers(plugin.getConfig("noteblockapi.nbs-sound", grave).getString("noteblockapi.nbs-sound"));
+                            plugin.getIntegrationManager().getNoteBlockAPI().playSongForAllPlayers(nbsSound);
                         }
                     } else {
                         player.playSound(player.getLocation(), plugin.getVersionManager().getSoundFromVersion("BLOCK_BELL_USE"), 1.0f, 0.93f);

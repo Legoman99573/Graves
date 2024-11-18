@@ -598,6 +598,9 @@ settings:
         play-locally: true
         # nbs sound to play. Must be placed in /plugins/GravesX/nbs/
         nbs-sound: "examplesound"
+        # What nbs sound should play upon death? Must be placed in /plugins/GravesX/nbs/
+        death-causes:
+          - "SUICIDE: ExampleSuicideSound"
 
       #########
       # Sound #
