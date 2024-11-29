@@ -217,20 +217,22 @@ public class Graves extends JavaPlugin {
             libraryLoaderUtil.loadLibrary("com{}github{}oshi", "oshi-core", "6.6.4", false);
         }
 
-        if (getConfig().getString("settings.storage.type").equals("POSTGRESQL")) {
+        String storageType = getConfig().getString("settings.storage.type").toUpperCase();
+
+        if ("POSTGRESQL".equals(storageType)) {
             libraryLoaderUtil.loadLibrary("org{}postgresql", "postgresql", "42.7.4", "org{}postgresql", "com{}ranull{}graves{}libraries{}postgresql", false);
-        } else if (getConfig().getString("settings.storage.type").equals("MARIADB")) {
-            libraryLoaderUtil.loadLibrary("org{}mariadb{}jdbc", "mariadb-java-client", "3.5.0", "org{}mariadb", "com{}ranull{}graves{}libraries{}mariadb", false);
-        } else if (getConfig().getString("settings.storage.type").equals("MYSQL")) {
+        } else if ("MARIADB".equals(storageType)) {
             libraryLoaderUtil.loadLibrary("com{}mysql", "mysql-connector-j", "9.1.0", "com{}mysql", "com{}ranull{}graves{}libraries{}mysql", false);
-        } else if (getConfig().getString("settings.storage.type").equals("H2")) {
+            libraryLoaderUtil.loadLibrary("org{}mariadb{}jdbc", "mariadb-java-client", "3.5.0", "org{}mariadb", "com{}ranull{}graves{}libraries{}mariadb", false);
+        } else if ("MYSQL".equals(storageType)) {
+            libraryLoaderUtil.loadLibrary("com{}mysql", "mysql-connector-j", "9.1.0", "com{}mysql", "com{}ranull{}graves{}libraries{}mysql", false);
+        } else if ("H2".equals(storageType)) {
             libraryLoaderUtil.loadLibrary("com{}h2database", "h2", "2.3.232", "org{}h2", "com{}ranull{}graves{}libraries{}h2", false);
-        } else if (getConfig().getString("settings.storage.type").equals("MSSQL")) {
+        } else if ("MSSQL".equals(storageType)) {
             String jdbcVersion;
 
             try {
                 Class.forName("java.nio.file.Files");
-
                 jdbcVersion = "12.8.1.jre11";
             } catch (ClassNotFoundException e) {
                 jdbcVersion = "12.8.1.jre8";
