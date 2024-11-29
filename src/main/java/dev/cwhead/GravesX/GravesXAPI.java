@@ -10,6 +10,7 @@ import com.ranull.graves.manager.*;
 import com.ranull.graves.type.Grave;
 import com.ranull.graves.util.*;
 import org.bukkit.*;
+import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Skull;
 import org.bukkit.entity.Entity;
@@ -475,6 +476,59 @@ public class GravesXAPI {
     public void removeOldestGrave(@NotNull LivingEntity livingEntity) {
         GraveManager graveManager = plugin.getGraveManager();
         graveManager.removeOldestGrave(livingEntity);
+    }
+
+    /**
+     * Determines if the specified location is near a grave.
+     * <p>
+     * This method serves as an overload to allow optional parameters such as a player
+     * or a block to be included in the proximity check.
+     *
+     * @param location the location to check for nearby graves (required).
+     * @param player   the player to consider in the proximity check (optional; nullable).
+     * @param block    the block to consider in the proximity check (optional; nullable).
+     * @return {@code true} if the location is near a grave, otherwise {@code false}.
+     */
+    public boolean isNearGrave(@NotNull Location location, @Nullable Player player, @Nullable Block block) {
+        return plugin.getGraveManager().isNearGrave(location, player, block);
+    }
+
+    /**
+     * Determines if the specified location is near a grave.
+     * <p>
+     * This variant of the method omits the player and block parameters.
+     *
+     * @param location the location to check for nearby graves (required).
+     * @return {@code true} if the location is near a grave, otherwise {@code false}.
+     */
+    public boolean isNearGrave(@NotNull Location location) {
+        return isNearGrave(location, null, null);
+    }
+
+    /**
+     * Determines if the specified location is near a grave, considering a specific player.
+     * <p>
+     * This variant of the method includes the player parameter but omits the block parameter.
+     *
+     * @param location the location to check for nearby graves (required).
+     * @param player   the player to consider in the proximity check (required).
+     * @return {@code true} if the location is near a grave, otherwise {@code false}.
+     */
+    public boolean isNearGrave(@NotNull Location location, @NotNull Player player) {
+        return isNearGrave(location, player, null);
+    }
+
+    /**
+     * Determines if the specified location is near a grave, considering a specific block.
+     * <p>
+     * This variant of the method includes the block parameter but omits the player parameter.
+     *
+     * @param location the location to check for nearby graves (required).
+     * @param block    the block to consider in the proximity check (required).
+     * @return {@code true} if the location is near a grave, otherwise {@code false}.
+     */
+    public boolean isNearGrave(@NotNull Location location, @NotNull Block block) {
+        return isNearGrave(location, null, block);
     }
 
     /**
