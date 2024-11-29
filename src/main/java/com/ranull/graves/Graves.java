@@ -542,7 +542,7 @@ public class Graves extends JavaPlugin {
     }
 
     private void updateConfig() {
-        int currentConfigVersion = 17;
+        int currentConfigVersion = 18;
         File configFolder = new File(getDataFolder(), "config");
 
         // Load the main config file to check the version
@@ -550,7 +550,7 @@ public class Graves extends JavaPlugin {
         FileConfiguration mainConfig = YamlConfiguration.loadConfiguration(mainConfigFile);
         int configVersion = mainConfig.getInt("config-version", 0);
 
-        if (configVersion < currentConfigVersion) {
+        if (configVersion != currentConfigVersion) {
             // Create the outdated folder if it doesn't exist
             new File(getDataFolder(), "outdated").mkdirs();
 
@@ -606,7 +606,7 @@ public class Graves extends JavaPlugin {
 
                 // Update configuration
                 ConfigUpdater.update(
-                        this,                   // Pass the plugin instance
+                        this,             // Pass the plugin instance
                         resourceName,           // Resource name in JAR
                         configFile,             // File to update
                         Collections.emptyList() // Empty list if no sections to ignore
