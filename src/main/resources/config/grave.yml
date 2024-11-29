@@ -18,6 +18,7 @@ settings:
         # Can graves be blown up.
         explode: false
         # The radius a grave may be protected. Setting to less than 2 could allow floating blocks when looted. Best to keep it at least more than two. To disable, just set to 0
+        # Note that higher protection radius's can cause TPS drops. It's best to keep this less than 5 unless you specifically need it to be higher.
         protection-radius: 5
         # Should blocks be protected when explosion occurs? This does not affect the grave at all, but allows legacy block explosion behavior around the grave regardless if the radius is protected.
         explode-protection: true
