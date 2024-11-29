@@ -1279,72 +1279,63 @@ public final class GraveManager {
     }
 
     /**
-     * Checks if the given location is within 15 blocks of any grave.
+     * Checks if the given location is within configured blocks of any grave.
      *
      * @param location The location to check.
-     * @return True if the location is within 15 blocks of any grave, false otherwise.
+     * @return True if the location is within configured blocks of any grave, false otherwise.
      */
     public boolean isNearGrave(Location location) {
+        return isNearGrave(location, null, null);
+    }
+
+    /**
+     * Checks if the given location is within configured blocks of any grave.
+     *
+     * @param location The location to check.
+     * @param player   Optional player to consider for additional logic.
+     * @param block    Optional block to consider for additional logic.
+     * @return True if the location is within configured blocks of any grave, false otherwise.
+     */
+    public boolean isNearGrave(Location location, Player player, Block block) {
         try {
             for (Grave grave : plugin.getCacheManager().getGraveMap().values()) {
-                Location graveLocation = plugin.getGraveManager().getGraveLocation(location, grave);
-                if (graveLocation != null) {
-                    double distance = location.distance(graveLocation);
-                    if (plugin.getConfig("grave.protection-radius", grave).getInt("grave.protection-radius") != 0 && distance <= plugin.getConfig("grave.protection-radius", grave).getInt("grave.protection-radius")) {
-                        return true;
+                Location graveLocation;
+                if (player != null) {
+                    graveLocation = plugin.getGraveManager().getGraveLocation(player.getLocation(), grave);
+                } else if (block != null) {
+                    graveLocation = plugin.getGraveManager().getGraveLocation(block.getLocation(), grave);
+                } else {
+                    graveLocation = plugin.getGraveManager().getGraveLocation(location, grave);
+                }
+
+                if (graveLocation != null && graveLocation.getWorld().equals(location.getWorld())) {
+                    int protectionRadius = plugin.getConfig("grave.protection-radius", grave).getInt("grave.protection-radius");
+                    if (protectionRadius > 0) {
+                        double squaredRadius = protectionRadius * protectionRadius;
+                        if (location.distanceSquared(graveLocation) <= squaredRadius) {
+                            return true;
+                        }
                     }
                 }
             }
         } catch (Exception ignored) {
-            // ignore
+            // Handle errors gracefully, such as location in a different world
         }
         return false;
     }
 
     /**
-     * Checks if the given location is within 15 blocks of any grave.
-     *
-     * @param location The location to check.
-     * @return True if the location is within 15 blocks of any grave, false otherwise.
+     * Overload for player-specific checks.
      */
     public boolean isNearGrave(Location location, Player player) {
-        try {
-            for (Grave grave : plugin.getCacheManager().getGraveMap().values()) {
-                Location graveLocation = plugin.getGraveManager().getGraveLocation(player.getLocation(), grave);
-                if (graveLocation != null) {
-                    double distance = location.distance(graveLocation);
-                    if (plugin.getConfig("grave.protection-radius", grave).getInt("grave.protection-radius") != 0 && distance <= plugin.getConfig("grave.protection-radius", grave).getInt("grave.protection-radius")) {
-                        return true;
-                    }
-                }
-            }
-        } catch (IllegalArgumentException ignored) {
-            // Assuming grave is in another world
-        }
-        return false;
+        return isNearGrave(location, player, null);
     }
 
     /**
-     * Checks if the given location is within 15 blocks of any grave.
-     *
-     * @param location The location to check.
-     * @return True if the location is within 15 blocks of any grave, false otherwise.
+     * Overload for block-specific checks.
      */
     public boolean isNearGrave(Location location, Block block) {
-        try {
-            for (Grave grave : plugin.getCacheManager().getGraveMap().values()) {
-                Location graveLocation = plugin.getGraveManager().getGraveLocation(block.getLocation(), grave);
-                if (graveLocation != null) {
-                    double distance = location.distance(graveLocation);
-                    if (plugin.getConfig("grave.protection-radius", grave).getInt("grave.protection-radius") != 0 && distance <= plugin.getConfig("grave.protection-radius", grave).getInt("grave.protection-radius")) {
-                        return true;
-                    }
-                }
-            }
-        } catch (Exception ignored) {
-            // ignore
-        }
-        return false;
+        return isNearGrave(location, null, block);
     }
 
     /**
