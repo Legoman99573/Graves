@@ -33,7 +33,7 @@ public class BlockBurnAndIgniteListener implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockSpread(BlockSpreadEvent event) {
-        if (isNearGrave(event.getBlock().getLocation(), event.getBlock())) {
+        if (plugin.getGraveManager().isNearGrave(event.getBlock().getLocation(), event.getBlock())) {
             event.setCancelled(true);
         }
     }
@@ -45,7 +45,7 @@ public class BlockBurnAndIgniteListener implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockBurn(BlockBurnEvent event) {
-        if (isNearGrave(event.getBlock().getLocation(), event.getIgnitingBlock()) || isNearGrave(event.getBlock().getLocation(), event.getBlock())) {
+        if (plugin.getGraveManager().isNearGrave(event.getBlock().getLocation(), event.getIgnitingBlock()) || plugin.getGraveManager().isNearGrave(event.getBlock().getLocation(), event.getBlock())) {
             event.setCancelled(true);
         }
     }
@@ -57,32 +57,9 @@ public class BlockBurnAndIgniteListener implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockIgnite(BlockIgniteEvent event) {
-        if (isNearGrave(event.getBlock().getLocation(), event.getIgnitingBlock()) ||
-                isNearGrave(event.getBlock().getLocation(), event.getBlock())) {
+        if (plugin.getGraveManager().isNearGrave(event.getBlock().getLocation(), event.getIgnitingBlock()) ||
+                plugin.getGraveManager().isNearGrave(event.getBlock().getLocation(), event.getBlock())) {
             event.setCancelled(true);
         }
-    }
-
-    /**
-     * Checks if the given location is within 15 blocks of any grave.
-     *
-     * @param location The location to check.
-     * @return True if the location is within 15 blocks of any grave, false otherwise.
-     */
-    private boolean isNearGrave(Location location, Block block) {
-        try {
-            for (Grave grave : plugin.getCacheManager().getGraveMap().values()) {
-                Location graveLocation = plugin.getGraveManager().getGraveLocation(block.getLocation(), grave);
-                if (graveLocation != null) {
-                    double distance = location.distance(graveLocation);
-                    if (plugin.getConfig("grave.protection-radius", grave).getInt("grave.protection-radius") != 0 && distance <= plugin.getConfig("grave.protection-radius", grave).getInt("grave.protection-radius")) {
-                        return true;
-                    }
-                }
-            }
-        } catch (Exception ignored) {
-            // ignore
-        }
-        return false;
     }
 }

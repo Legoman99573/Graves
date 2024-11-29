@@ -42,7 +42,7 @@ public class BlockPlaceListener implements Listener {
         // If the block is a grave or if the item being used is a token, cancel the event
         if (isGraveBlock(grave) || isTokenItem(event)) {
             event.setCancelled(true);
-        } else if (isNearGrave(block.getLocation())) {
+        } else if (plugin.getGraveManager().isNearGrave(block.getLocation())) {
             event.setCancelled(true);
             plugin.getEntityManager().sendMessage("message.grave-protection-build-deny", player);
         }
@@ -66,28 +66,5 @@ public class BlockPlaceListener implements Listener {
      */
     private boolean isTokenItem(BlockPlaceEvent event) {
         return plugin.getRecipeManager() != null && plugin.getRecipeManager().isToken(event.getItemInHand());
-    }
-
-    /**
-     * Checks if the given location is within 15 blocks of any grave.
-     *
-     * @param location The location to check.
-     * @return True if the location is within 15 blocks of any grave, false otherwise.
-     */
-    private boolean isNearGrave(Location location) {
-        try {
-            for (Grave grave : plugin.getCacheManager().getGraveMap().values()) {
-                Location graveLocation = plugin.getGraveManager().getGraveLocation(location, grave);
-                if (graveLocation != null) {
-                    double distance = location.distance(graveLocation);
-                    if (plugin.getConfig("grave.protection-radius", grave).getInt("grave.protection-radius") != 0 && distance <= plugin.getConfig("grave.protection-radius", grave).getInt("grave.protection-radius")) {
-                        return true;
-                    }
-                }
-            }
-        } catch (Exception ignored) {
-            // ignore
-        }
-        return false;
     }
 }

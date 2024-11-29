@@ -54,7 +54,7 @@ public class BlockBreakListener implements Listener {
             } else {
                 event.setCancelled(true);
             }
-        } else if (isNearGrave(block.getLocation(), player)) {
+        } else if (plugin.getGraveManager().isNearGrave(block.getLocation(), player)) {
             event.setCancelled(true);
             plugin.getEntityManager().sendMessage("message.grave-protection-break-deny", player);
         }
@@ -146,28 +146,5 @@ public class BlockBreakListener implements Listener {
         plugin.getGraveManager().playEffect("effect.loot", block.getLocation(), grave);
         plugin.getEntityManager().spawnZombie(block.getLocation(), player, player, grave);
         plugin.getEntityManager().runCommands("event.command.break", player, block.getLocation(), grave);
-    }
-
-    /**
-     * Checks if the given location is within 15 blocks of any grave.
-     *
-     * @param location The location to check.
-     * @return True if the location is within 15 blocks of any grave, false otherwise.
-     */
-    private boolean isNearGrave(Location location, Player player) {
-        try {
-            for (Grave grave : plugin.getCacheManager().getGraveMap().values()) {
-                Location graveLocation = plugin.getGraveManager().getGraveLocation(player.getLocation(), grave);
-                if (graveLocation != null) {
-                    double distance = location.distance(graveLocation);
-                    if (plugin.getConfig("grave.protection-radius", grave).getInt("grave.protection-radius") != 0 && distance <= plugin.getConfig("grave.protection-radius", grave).getInt("grave.protection-radius")) {
-                        return true;
-                    }
-                }
-            }
-        } catch (IllegalArgumentException ignored) {
-            // Assuming grave is in another world
-        }
-        return false;
     }
 }

@@ -19,7 +19,7 @@ settings:
         explode: false
         # The radius a grave may be protected. Setting to less than 2 could allow floating blocks when looted. Best to keep it at least more than two. To disable, just set to 0
         protection-radius: 5
-        # Should blocks be protected when explosion occurs?
+        # Should blocks be protected when explosion occurs? This does not affect the grave at all, but allows legacy block explosion behavior around the grave regardless if the radius is protected.
         explode-protection: true
         # Should we replace the oldest graves with a new one when a player his the max limit? This will remove abandoned graves as well and all contents will be lost.
         replace-oldest: false
