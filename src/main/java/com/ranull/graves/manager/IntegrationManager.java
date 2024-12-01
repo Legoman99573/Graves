@@ -1229,7 +1229,7 @@ public final class IntegrationManager {
         if (plugin.getConfig().getBoolean("settings.compatibility.warning")) {
             for (World world : plugin.getServer().getWorlds()) {
                 if (world.getGameRuleValue("keepInventory").equals("true")) {
-                    plugin.compatibilityMessage("World \"" + world.getName() + "\" has keepInventory set to true, Graves will not be created here unless a player has the \" graves.keepinventory.bypass\" permission.");
+                    plugin.compatibilityMessage("World \"" + world.getName() + "\" has keepInventory set to true, Graves will not be created here unless a player has the \"graves.keepinventory.bypass\" permission.");
                 }
             }
 
