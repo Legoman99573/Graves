@@ -67,7 +67,9 @@ public class EntityDeathListener implements Listener {
 
         if (!isEnabledGrave(livingEntity, permissionList, entityName)) return;
 
-        if (isKeepInventory((PlayerDeathEvent) event, entityName)) return;
+        Player player = ((PlayerDeathEvent) event).getEntity().getPlayer();
+
+        if (isKeepInventory((PlayerDeathEvent) event, entityName) && !plugin.hasGrantedPermission(" graves.keepinventory.bypass", player)) return;
 
         if (event.getDrops().isEmpty()) {
             plugin.debugMessage("Grave not created for " + entityName + " because they had an empty inventory", 2);
@@ -84,8 +86,6 @@ public class EntityDeathListener implements Listener {
         }
 
         if (!isValidDamageCause(livingEntity, permissionList, entityName)) return;
-
-        Player player = ((PlayerDeathEvent) event).getEntity().getPlayer();
 
         // Retrieve the server-configured maximum graves
         int serverMaxGraves = plugin.getConfig("grave.max", livingEntity, permissionList).getInt("grave.max");
@@ -290,7 +290,7 @@ public class EntityDeathListener implements Listener {
      */
     private boolean isKeepInventory(PlayerDeathEvent event, String entityName) {
         try {
-            if (event.getKeepInventory()) {
+            if (event.getKeepInventory() && !plugin.hasGrantedPermission(" graves.keepinventory.bypass", event.getEntity().getPlayer())) {
                 plugin.debugMessage("Grave not created for " + entityName + " because they had keep inventory", 2);
                 return true;
             }

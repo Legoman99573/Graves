@@ -179,3 +179,7 @@ permissions:
   graves.reload:
     default: op
     description: Reload Graves
+
+  graves.keepinventory.bypass:
+    default: false
+    description: Allows graves to be created even if they have keep inventory. Not recommended to give this permission to prevent dupe bugs.
