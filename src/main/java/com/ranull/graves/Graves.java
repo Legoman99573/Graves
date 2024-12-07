@@ -217,7 +217,7 @@ public class Graves extends JavaPlugin {
             libraryLoaderUtil.loadLibrary("com{}github{}oshi", "oshi-core", "6.6.4", false);
         }
 
-        String storageType = getConfig().getString("settings.storage.type").toUpperCase();
+        String storageType = Objects.requireNonNull(getConfig().getString("settings.storage.type")).toUpperCase();
 
         if ("POSTGRESQL".equals(storageType)) {
             libraryLoaderUtil.loadLibrary("org{}postgresql", "postgresql", "42.7.4", "org{}postgresql", "com{}ranull{}graves{}libraries{}postgresql", false);
