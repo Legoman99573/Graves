@@ -13,6 +13,7 @@ import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Skull;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -30,6 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -1176,6 +1178,30 @@ public class GravesXAPI {
             }
         }
         return graveCount;
+    }
+
+    /**
+     * Downloads a plugin from Spiget and saves it to the plugins folder, replacing it if it exists.
+     *
+     * @param pluginId      The Spigot resource ID of the plugin.
+     * @param pluginName    The name of the plugin file (without the ".jar" extension).
+     * @param pluginsFolder The path to the plugins' folder.
+     * @throws IOException If the download or file operations fail.
+     */
+    public static void downloadAndReplacePlugin(long pluginId, String pluginName, String pluginsFolder, CommandSender commandSender) throws IOException {
+        PluginDownloadUtil.downloadAndReplacePlugin(pluginId, pluginName, pluginsFolder, commandSender);
+    }
+
+    /**
+     * Downloads a plugin from Spiget and saves it to the plugins folder, replacing it if it exists.
+     *
+     * @param pluginId      The Spigot resource ID of the plugin.
+     * @param pluginName    The name of the plugin file (without the ".jar" extension).
+     * @param pluginsFolder The path to the plugins' folder.
+     * @throws IOException If the download or file operations fail.
+     */
+    public static void downloadAndReplacePlugin(String pluginId, String pluginName, String pluginsFolder, CommandSender commandSender) throws IOException {
+        PluginDownloadUtil.downloadAndReplacePlugin(pluginId, pluginName, pluginsFolder, commandSender);
     }
 
     /**

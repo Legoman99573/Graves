@@ -2,6 +2,7 @@ package com.ranull.graves.command;
 
 import com.ranull.graves.Graves;
 import com.ranull.graves.type.Grave;
+import com.ranull.graves.util.PluginDownloadUtil;
 import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -15,6 +16,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -81,6 +83,10 @@ public final class GravesCommand implements CommandExecutor, TabCompleter {
                     break;
                 case "import":
                     handleImportCommand(commandSender);
+                    break;
+                case "addons":
+                case "addon":
+                    handleAddonCommand(commandSender, args);
                     break;
                 case "help":
                 default:
@@ -198,6 +204,12 @@ public final class GravesCommand implements CommandExecutor, TabCompleter {
                 stringList.add("purge");
             }
 
+            if (!(commandSender instanceof Player)
+                    || plugin.hasGrantedPermission("graves.download.addons", ((Player) commandSender).getPlayer())) {
+                stringList.add("addon");
+                stringList.add("addons");
+            }
+
             if (plugin.getRecipeManager() != null
                     && (!(commandSender instanceof Player)
                     || plugin.hasGrantedPermission("graves.givetoken", ((Player) commandSender).getPlayer()))) {
@@ -217,6 +229,8 @@ public final class GravesCommand implements CommandExecutor, TabCompleter {
                 stringList.add("1");
                 stringList.add("2");
 
+            } else if ((args[0].equals("addon") || args[0].equals("addons")) && (!(commandSender instanceof Player) || plugin.hasGrantedPermission("graves.download.addon", ((Player) commandSender).getPlayer()))) {
+                stringList.add("LandProtection");
             } else if (args[0].equals("purge") && (!(commandSender instanceof Player) || plugin.hasGrantedPermission("graves.debug", ((Player) commandSender).getPlayer()))) {
                 if (args.length == 2) {
                     stringList.add("graves");
@@ -291,6 +305,32 @@ public final class GravesCommand implements CommandExecutor, TabCompleter {
                     }
                 } else {
                     plugin.getEntityManager().sendMessage("message.permission-denied", player);
+                }
+            }
+        } else {
+            sendHelpMenu(commandSender);
+        }
+    }
+
+    private void handleAddonCommand(CommandSender commandSender, String[] args) {
+        if (args.length == 2) {
+            if (commandSender instanceof Player && plugin.hasGrantedPermission("graves.download.addons", ((Player) commandSender).getPlayer())) {
+                switch (args[1].toUpperCase()) {
+                    case "LANDPROTECTION":
+                        try {
+                            PluginDownloadUtil.downloadAndReplacePlugin(120633, "GravesXAddon-LandProtection", "plugins", commandSender);
+                        } catch (IOException e) {
+                            commandSender.sendMessage(ChatColor.RED + "☠" + ChatColor.DARK_GRAY + " » " + ChatColor.RESET + "An error occurred while running command. Check console.");
+                            plugin.getLogger().warning("An issue occurred while running this command. Cause: " + e.getMessage());
+                            plugin.logStackTrace(e);
+                        }
+                        break;
+                    default:
+                        commandSender.sendMessage(ChatColor.RED + "☠" + ChatColor.DARK_GRAY + " » " + ChatColor.RESET + "Must enter a valid addon.");
+                }
+            } else {
+                if (commandSender instanceof Player) {
+                    plugin.getEntityManager().sendMessage("message.permission-denied", ((Player) commandSender).getPlayer());
                 }
             }
         } else {
