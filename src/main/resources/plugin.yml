@@ -18,9 +18,6 @@ softdepend:
   - Vault
   - ProtocolLib
   - WorldEdit
-  - WorldGuard
-  - GriefDefender
-  - GriefPrevention
   - PlaceholderAPI
   - FurnitureLib
   - FurnitureEngine
@@ -38,7 +35,6 @@ softdepend:
   - FancyNpcs
   - Geyser-Spigot
   - floodgate
-  - Towny
   - LuckPerms
   - CoreProtect
   - NBTAPI
