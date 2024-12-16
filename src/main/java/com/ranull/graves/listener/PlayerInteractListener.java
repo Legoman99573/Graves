@@ -122,9 +122,13 @@ public class PlayerInteractListener implements Listener {
         }
 
         if (grave != null) {
+            event.setCancelled(true);
             try {
-                event.setCancelled(plugin.getGraveManager().openGrave(player, block.getLocation(), grave));
-            } catch (NullPointerException e) {
+                Grave finalGrave = grave;
+                plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+                    plugin.getGraveManager().openGrave(player, block.getLocation(), finalGrave);
+                }, 1L);
+            } catch (Exception e) {
                 plugin.getLogger().severe("Failed to open grave: " + e.getMessage());
                 plugin.logStackTrace(e);
             }
