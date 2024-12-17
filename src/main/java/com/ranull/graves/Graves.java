@@ -57,7 +57,6 @@ public class Graves extends JavaPlugin {
     private ParticleManager particleManager;
     private Compatibility compatibility;
     private FileConfiguration fileConfiguration;
-    private boolean wasReloaded = false;
     private boolean isDevelopmentBuild = false;
     private boolean isOutdatedBuild = false;
     private boolean isUnknownBuild = false;
@@ -84,9 +83,6 @@ public class Graves extends JavaPlugin {
     @Override
     public void onEnable() {
         loadLibraries();
-        if (wasReloaded()) {
-            compatibilityMessage("Server was reloaded with the /reload command. No support will be given if something breaks.");
-        }
 
         integrationManager.load();
         integrationManager.loadNoReload();
@@ -128,7 +124,6 @@ public class Graves extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        wasReloaded = true;
         runShutdownTasks();
     }
 
@@ -413,10 +408,6 @@ public class Graves extends JavaPlugin {
                 return getDataManager().getDatabaseVersions();
             }
         }));
-    }
-
-    public boolean wasReloaded() {
-        return wasReloaded;
     }
 
     public void registerListeners() {

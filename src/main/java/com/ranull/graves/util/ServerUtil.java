@@ -173,7 +173,6 @@ public final class ServerUtil {
         stringList.add("Player List: " + getPlayerList());
         stringList.add("Plugin Count: " + plugin.getServer().getPluginManager().getPlugins().length);
         stringList.add("Plugin List: " + getPluginList());
-        stringList.add("Server used /reload: " + plugin.wasReloaded());
         stringList.add("");
 
         stringList.add("===================");
