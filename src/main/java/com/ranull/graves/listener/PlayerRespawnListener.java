@@ -91,8 +91,8 @@ public class PlayerRespawnListener implements Listener {
                         .getInt("respawn.potion-effect-duration") * 20; // Duration in ticks (20 ticks = 1 second)
 
                 // Create and apply potion effects
-                PotionEffect potionEffect = new PotionEffect(PotionEffectType.RESISTANCE, effectDuration, 4);
-                PotionEffect potionEffect2 = new PotionEffect(PotionEffectType.FIRE_RESISTANCE, effectDuration, 0);
+                PotionEffect potionEffect = new PotionEffect(plugin.getVersionManager().getPotionEffectTypeFromVersion("RESISTANCE"), effectDuration, 4);
+                PotionEffect potionEffect2 = new PotionEffect(plugin.getVersionManager().getPotionEffectTypeFromVersion("FIRE_RESISTANCE"), effectDuration, 0);
                 player.addPotionEffect(potionEffect);
                 player.addPotionEffect(potionEffect2);
             }

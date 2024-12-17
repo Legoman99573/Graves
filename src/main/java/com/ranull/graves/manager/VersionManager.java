@@ -6,6 +6,7 @@ import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.potion.PotionEffectType;
 
 /**
  * Manages version-specific functionality for the Graves plugin.
@@ -605,7 +606,28 @@ public final class VersionManager {
                 // Add other cases for different sounds here
         }
         if (toReturn == null) {
-            throw new IllegalArgumentException("Material can't be null. This is a bug.");
+            throw new IllegalArgumentException("Sound can't be null. This is a bug.");
+        }
+
+        return toReturn;
+    }
+
+    public PotionEffectType getPotionEffectTypeFromVersion(String potionEffect) {
+        PotionEffectType toReturn = null;
+        switch (potionEffect) {
+            case "RESISTANCE":
+                try {
+                    toReturn = PotionEffectType.getByName("RESISTANCE");
+                } catch (NullPointerException | IllegalArgumentException e) {
+                    toReturn = PotionEffectType.getByName("DAMAGE_RESISTANCE");
+                }
+                break;
+            case "FIRE_RESISTANCE":
+                toReturn = PotionEffectType.getByName("FIRE_RESISTANCE");
+            // Add other cases for different sounds here
+        }
+        if (toReturn == null) {
+            throw new IllegalArgumentException("Potion Effect Type can't be null. This is a bug.");
         }
 
         return toReturn;
