@@ -5,6 +5,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.plugin.PluginDescriptionFile;
 import oshi.SystemInfo;
 import oshi.hardware.*;
 
@@ -79,7 +80,7 @@ public final class ServerUtil {
         stringList.add("CPU Information:");
         stringList.add("================");
         stringList.add("CPU: " + (cpuName != null ? cpuName : "Not available"));
-        stringList.add("Vendor: " + (vendorName != null ? vendorName : "Not available"));
+        stringList.add("CPU Vendor: " + (vendorName != null ? vendorName : "Not available"));
         stringList.add("CPU Identifier: " + (identifier.getIdentifier() != null ? identifier.getIdentifier() : "Not available"));
         // Current frequency for each core
         long[] currentFreqs = processor.getCurrentFreq();
@@ -96,13 +97,17 @@ public final class ServerUtil {
         stringList.add("CPU Architecture: " + identifier.getMicroarchitecture());
         stringList.add("CPU Stepping: " + identifier.getStepping());
 
-        List<CentralProcessor.ProcessorCache> cacheSizes = processor.getProcessorCaches();
-        if (cacheSizes != null && !cacheSizes.isEmpty()) {
-            stringList.add("CPU Cache Sizes: ");
-            for (CentralProcessor.ProcessorCache cache : cacheSizes) {
-                stringList.add(" - " + cache.getCacheSize() + " bytes, Level: " + cache.getLevel());
+        try {
+            List<CentralProcessor.ProcessorCache> cacheSizes = processor.getProcessorCaches();
+            if (cacheSizes != null && !cacheSizes.isEmpty()) {
+                stringList.add("CPU Cache Sizes: ");
+                for (CentralProcessor.ProcessorCache cache : cacheSizes) {
+                    stringList.add(" - " + cache.getCacheSize() + " bytes, Level: " + cache.getLevel());
+                }
+            } else {
+                stringList.add("CPU Cache Sizes: Not available");
             }
-        } else {
+        } catch (Exception e) {
             stringList.add("CPU Cache Sizes: Not available");
         }
         stringList.add("");
@@ -122,6 +127,7 @@ public final class ServerUtil {
             stringList.add(ramList + ":");
             stringList.add("=======");
             stringList.add("Vendor: " + (vendor != null ? vendor : "Unknown"));
+            stringList.add("System: " + (computerSystem != null ? computerSystem : "Unknown"));
             stringList.add("Memory Size: " + formatBytes(ram.getCapacity()));
             stringList.add("Speed: " + ram.getClockSpeed() + " MHz");
             stringList.add("Memory Type: " + ram.getMemoryType());
@@ -178,21 +184,6 @@ public final class ServerUtil {
 
         if (plugin.getVersionManager().hasAPIVersion()) {
             stringList.add(plugin.getDescription().getName() + " API Version: " + plugin.getDescription().getAPIVersion());
-        }
-
-        List<String> depends = getHardDependencies();
-        List<String> softDepends = getSoftDependencies();
-
-        if (depends != null) {
-            stringList.add(plugin.getDescription().getName() + " Hard Dependencies: " + String.join(", ", depends));
-        } else {
-            stringList.add(plugin.getDescription().getName() + " Hard Dependencies: None");
-        }
-
-        if (softDepends != null) {
-            stringList.add(plugin.getDescription().getName() + " Soft Dependencies: " + String.join(", ", softDepends));
-        } else {
-            stringList.add(plugin.getDescription().getName() + " Soft Dependencies: None");
         }
 
         String databaseTypefromConfig = plugin.getConfig().getString("settings.storage.type", "SQLITE").toUpperCase();
@@ -481,25 +472,5 @@ public final class ServerUtil {
             sb.append(plugin.getName()).append(" ").append(plugin.getDescription().getVersion()).append(", ");
         }
         return sb.length() > 0 ? sb.substring(0, sb.length() - 2) : "";
-    }
-
-    private static List<String> getHardDependencies() {
-        List<String> depends = new ArrayList<>();
-        for (Plugin plugin : Bukkit.getServer().getPluginManager().getPlugins()) {
-            if (plugin.getDescription().getDepend().contains("GravesX")) {
-                depends.add(plugin.getName() + " v." + plugin.getDescription().getVersion());
-            }
-        }
-        return depends.isEmpty() ? null : depends;
-    }
-
-    private static List<String> getSoftDependencies() {
-        List<String> softDepends = new ArrayList<>();
-        for (Plugin plugin : Bukkit.getServer().getPluginManager().getPlugins()) {
-            if (plugin.getDescription().getSoftDepend().contains("GravesX")) {
-                softDepends.add(plugin.getName() + " v." + plugin.getDescription().getVersion());
-            }
-        }
-        return softDepends.isEmpty() ? null : softDepends;
     }
 }
