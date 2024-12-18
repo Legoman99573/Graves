@@ -60,6 +60,22 @@ public final class BlockManager {
     }
 
     /**
+     * Gets the grave block associated with the specified location.
+     *
+     * @param location The location to get the grave for.
+     * @return The grave associated with the location, or null if not found.
+     */
+    public Grave getGraveFromBlockLocation(Location location) {
+        if (location == null) return null;
+
+        Block block = location.getBlock();
+        BlockData blockData = getBlockData(block);
+
+        return blockData != null && plugin.getCacheManager().getGraveMap().containsKey(blockData.getGraveUUID())
+                ? plugin.getCacheManager().getGraveMap().get(blockData.getGraveUUID()) : null;
+    }
+
+    /**
      * Creates a block at the specified location for the given grave.
      *
      * @param location The location to create the block.
