@@ -32,6 +32,7 @@ public class ProjectileHitListener implements Listener {
         Block block = event.getHitBlock();
 
         Location location = block != null ? block.getLocation() : null;
+        if (block == null) return;
         Grave grave = plugin.getBlockManager().getGraveFromBlock(block);
 
         if (grave != null) {
