@@ -83,6 +83,15 @@ settings:
         explode: true
         # When a grave is broken drop everything in it. If false it gets destroyed.
         break: true
+        # Should graves drop contents when a grave gets hit by a projectile?
+        projectile:
+          enabled: false
+          # Should projectiles from players cause the grave to break?
+          player: true
+          # Should projectiles from a living entity cause the grave to break? (Skeletons or other mobs)
+          living-entity: true
+          # Should projectiles from other sources cause the grave to break? (Dispenser)
+          other: false
 
       #########
       # Block #

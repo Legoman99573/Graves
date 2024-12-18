@@ -436,6 +436,7 @@ public class Graves extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new InventoryOpenListener(this), this);
         getServer().getPluginManager().registerEvents(new CreatureSpawnListener(this), this);
         getServer().getPluginManager().registerEvents(new ExplosionPrimeListener(this), this);
+        getServer().getPluginManager().registerEvents(new ProjectileHitListener(this), this);
 
         if (!versionManager.is_v1_7()) {
             getServer().getPluginManager().registerEvents(new PlayerInteractAtEntityListener(this), this);

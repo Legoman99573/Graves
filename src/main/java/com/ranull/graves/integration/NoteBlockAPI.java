@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Utility class to handle playing and stopping NoteBlockAPI songs for individual players or all players on the server.
@@ -100,6 +101,19 @@ public class NoteBlockAPI {
     }
 
     /**
+     * Stops the currently playing song for a specific player.
+     *
+     * @param uuid the player uuid for whom to stop the song.
+     */
+    public void stopSongForPlayer(UUID uuid) {
+        SongPlayer songPlayer = activeSongPlayers.remove(uuid);
+        if (songPlayer != null) {
+            songPlayer.setPlaying(false);
+            songPlayer.destroy();
+        }
+    }
+
+    /**
      * Stops the currently playing song for all players.
      */
     public void stopSongForAllPlayers() {
@@ -129,6 +143,18 @@ public class NoteBlockAPI {
      */
     public boolean isSongPlayingForPlayer(Player player) {
         SongPlayer songPlayer = activeSongPlayers.get(player);
+        return songPlayer != null && songPlayer.isPlaying();
+    }
+
+    /**
+     * Checks if a song is currently playing for a specific player.
+     *
+     * @param uuid the player's UUID to check for active song playback.
+     * @return true if a song is actively playing for the player, false otherwise.
+     */
+    public boolean isSongPlayingForPlayer(UUID uuid) {
+        // Retrieve the SongPlayer associated with the UUID
+        SongPlayer songPlayer = activeSongPlayers.get(uuid);
         return songPlayer != null && songPlayer.isPlaying();
     }
 
