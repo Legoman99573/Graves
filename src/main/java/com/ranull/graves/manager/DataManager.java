@@ -531,14 +531,15 @@ public final class DataManager {
      * @param config the HikariConfig to configure.
      */
     private void configureH2(HikariConfig config) {
-        String filePath = plugin.getDataFolder() + File.separator + "data" + File.separator + "graves.data";
+        File file = new File(plugin.getDataFolder(), "data" + File.separator + "graves.data");
+        String filePath = file.getAbsolutePath();
         String username = plugin.getConfig().getString("settings.storage.h2.username", "sa");
         String password = plugin.getConfig().getString("settings.storage.h2.password", "");
         long maxLifetime = plugin.getConfig().getLong("settings.storage.h2.maxLifetime", 1800000);
         int maxConnections = plugin.getConfig().getInt("settings.storage.h2.maxConnections", 50); // Increased pool size
         long connectionTimeout = plugin.getConfig().getLong("settings.storage.h2.connectionTimeout", 30000);
 
-        config.setJdbcUrl("jdbc:h2:file:./" + filePath + ";AUTO_SERVER=TRUE");
+        config.setJdbcUrl("jdbc:h2:file:" + filePath + ";AUTO_SERVER=TRUE");
         config.setUsername(username);
         config.setPassword(password);
         config.addDataSourceProperty("autoReconnect", "true");
