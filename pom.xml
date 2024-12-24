@@ -512,7 +512,7 @@
         <dependency>
             <groupId>io.th0rgal</groupId>
             <artifactId>oraxen</artifactId>
-            <version>1.181.0</version>
+            <version>1.186.1</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
