@@ -4,7 +4,7 @@
   <groupId>com.ranull</groupId>
   <artifactId>graves</artifactId>
   <name>GravesX</name>
-  <version>4.9.7.2</version>
+  <version>4.9.7.3</version>
   <description>Full featured lightweight death chest plugin.</description>
   <developers>
     <developer>
@@ -531,21 +531,9 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>com.github.imDaniX</groupId>
-      <artifactId>MiniTranslator</artifactId>
-      <version>v2.1</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
       <version>2.18.0</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>de.themoep</groupId>
-      <artifactId>minedown-adventure</artifactId>
-      <version>1.7.3-graves</version>
       <scope>provided</scope>
     </dependency>
     <dependency>

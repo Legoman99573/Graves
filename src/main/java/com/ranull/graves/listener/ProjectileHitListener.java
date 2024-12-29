@@ -27,8 +27,6 @@ public class ProjectileHitListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onProjectileHitGrave(ProjectileHitEvent event) {
-        ProjectileSource shooter = event.getEntity().getShooter();
-
         Block block = event.getHitBlock();
 
         Location location = block != null ? block.getLocation() : null;
@@ -38,9 +36,9 @@ public class ProjectileHitListener implements Listener {
         if (grave != null) {
             if (!plugin.getConfig("drop.projectile.enabled", grave).getBoolean("drop.projectile.enabled")) return;
 
-            if (shooter instanceof Player) {
+            if (event.getEntity().getShooter() instanceof Player) {
                 if (!plugin.getConfig("drop.projectile.player", grave).getBoolean("drop.projectile.player")) return;
-                Player player = ((Player) shooter).getPlayer();
+                Player player = ((Player) event.getEntity().getShooter()).getPlayer();
 
                 GraveProjectileHitEvent graveProjectileHitEvent = new GraveProjectileHitEvent(location, player, grave, event.getEntity(), block);
 
@@ -61,10 +59,10 @@ public class ProjectileHitListener implements Listener {
                     String playerName = player != null ? player.getDisplayName() : "Unknown";
                     plugin.debugMessage("Grave destroyed by projectile " + event.getEntity().getName().toLowerCase() + " caused by player " + playerName + ".", 1);
                 }
-            } else if (shooter instanceof LivingEntity) {
+            } else if (event.getEntity().getShooter() instanceof LivingEntity) {
                 if (!plugin.getConfig("drop.projectile.living-entity", grave).getBoolean("drop.projectile.living-entity")) return;
 
-                LivingEntity livingEntity = ((LivingEntity) shooter);
+                LivingEntity livingEntity = ((LivingEntity) event.getEntity().getShooter());
                 GraveProjectileHitEvent graveProjectileHitEvent = new GraveProjectileHitEvent(location, livingEntity, grave, event.getEntity(), block);
 
                 plugin.getServer().getPluginManager().callEvent(graveProjectileHitEvent);
